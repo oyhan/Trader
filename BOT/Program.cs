@@ -13,14 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var appSettings = new AppSettings();
- builder.Configuration.GetSection("AppSettings").Bind(appSettings);
-
-
-builder.Services.AddSingleton(appSettings);
-builder.Services.AddSingleton(new TelegramBotClient(appSettings.BotApiKey));
-builder.Services.AddSingleton<TelegramService>();
-builder.Services.AddSingleton<ImageProcessor>();
+builder.Services.ConfigureDependencies(builder.Configuration);
 
 
 var app = builder.Build();

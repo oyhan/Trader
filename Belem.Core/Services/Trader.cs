@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Belem.Core.Services
 {
-    public class Trader
+    public class Trader : IDisposable
     {
         public string Token { get; set; }
         public string Username { get;  private set; }
@@ -29,10 +29,15 @@ namespace Belem.Core.Services
 
         public void Buy()
         {
-            Login(Username, Password);
-            Thread.Sleep(3000);
-            SetBuyOrder();
-            BuyCoin();
+            Browser.Url = "https://google.com";
+            if (Browser.Title =="Google")
+            {
+                Console.WriteLine("YES***********");
+            }
+            //Login(Username, Password);
+            //Thread.Sleep(3000);
+            //SetBuyOrder();
+            //BuyCoin();
         }
 
         public void Sell()
@@ -112,5 +117,11 @@ namespace Belem.Core.Services
             throw new NotFoundException("Can not find element");
         }
 
+        public void Dispose()
+        {
+            Browser.Quit();
+        }
     }
+
+  
 }

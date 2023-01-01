@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Interactions;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Belem.Core.Services
 {
@@ -15,23 +18,24 @@ namespace Belem.Core.Services
         {
             this._appSettings = appSettings;
 
-            if (appSettings.Credentials.Count!=appSettings.Domains.Count())
+            if (appSettings.Credentials.Count > appSettings.Domains.Count())
             {
-                throw new InvalidOperationException("no of domains is different from no of users");
+                throw new InvalidOperationException("no of domains is less than no of users");
             }
-            InitializeInstances();
             foreach (var item in _appSettings.Domains)
             {
                 Domains.Push(item);
             }
+            InitializeInstances();
+
         }
 
-        public async Task SetSellAndButOrders(TimeSpan buyTime, TimeSpan sellTime , string token)
+        public async Task SetSellAndButOrders(TimeSpan buyTime, TimeSpan sellTime, string token)
         {
 
             foreach (var trader in _traders)
             {
-                trader.Value.Token= token;
+                trader.Value.Token = token;
 
                 trader.Value.Engage = _appSettings.EngageInPercent;
 
@@ -47,17 +51,36 @@ namespace Belem.Core.Services
             foreach (var user in _appSettings.Credentials)
             {
                 var chromeOptions = new ChromeOptions();
+
+                chromeOptions.AddArguments("headless");
+                chromeOptions.AddArguments("no-sandbox");
                 //chromeOptions.AddArguments("headless");
+                var linux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
 
-                using var browser = new ChromeDriver(chromeOptions);
+                if (linux)
+                {
+                    var path = "selenium";
+                   
 
-                var trader = new Trader(Domains.Pop(), browser, user.Value, user.Key);
+                    var fileExiest = File.Exists(path);
+                    using var browser = new ChromeDriver(path, chromeOptions);
+                    var trader = new Trader(Domains.Pop(), browser, user.Value, user.Key);
+                    _traders[user.Key] = (trader);
+                    trader.Buy(); 
+                }
+                else
+                {
+                    using var browser = new ChromeDriver(chromeOptions);
+                    var trader = new Trader(Domains.Pop(), browser, user.Value, user.Key);
+                    _traders[user.Key] = (trader);
 
-                _traders[user.Key]=(trader);
+                }
+
+
             }
         }
 
-      
+
 
 
         private void SetUpTimer(TimeSpan alertTime, Action action)
