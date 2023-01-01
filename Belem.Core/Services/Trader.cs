@@ -6,42 +6,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using Telegram.Bot.Types;
+using OpenQA.Selenium.Interactions;
 
 namespace Belem.Core.Services
 {
-    public class Trader : IDisposable
+    public class Trader 
     {
+        private Actions _action;
+
         public string Token { get; set; }
-        public string Username { get;  private set; }
+        public string Username { get; private set; }
         public string Password { get; private set; }
         public WebDriver Browser { get; private set; }
-        public string DomainAddress  { get; private set; }
+        public string DomainAddress { get; private set; }
 
         public int Engage { get; set; } = 25;
 
-        public Trader(string domainAddress, WebDriver browser, string password, string usename)
+        public Trader(string domainAddress, string password, string usename)
         {
             DomainAddress = domainAddress;
-            Browser = browser;
             Password = password;
             Username = usename;
         }
 
         public void Buy()
-        {
-            Browser.Url = "https://google.com";
-            if (Browser.Title =="Google")
-            {
-                Console.WriteLine("YES***********");
-            }
-            //Login(Username, Password);
-            //Thread.Sleep(3000);
-            //SetBuyOrder();
-            //BuyCoin();
+       {
+            Console.WriteLine("BUY************");
+            SetBrowser();
+            Login(Username, Password);
+            Thread.Sleep(3000);
+            SetBuyOrder();
+            BuyCoin();
+            Thread.Sleep(3000);
+            Browser.Quit();
         }
 
         public void Sell()
         {
+            Console.WriteLine("SELL************");
+            SetBrowser();
 
             Login(Username, Password);
 
@@ -50,6 +55,8 @@ namespace Belem.Core.Services
             SetSellOrder();
 
             SellCoin();
+            Thread.Sleep(3000);
+            Browser.Quit();
 
         }
 
@@ -83,7 +90,11 @@ namespace Belem.Core.Services
         private void SellCoin()
         {
             var submit = GetElement(By.CssSelector(".btn-submit.mb-btn.bg-sell"));
-            submit.Click();
+
+            Browser.ExecuteScript("arguments[0].click();", submit);
+
+            
+            //submit.Click();
         }
 
 
@@ -92,7 +103,12 @@ namespace Belem.Core.Services
         {
             Browser.Url = $"{DomainAddress}/#/exchange/{Token}_usdt";
             Thread.Sleep(3000);
+
             var gharbilak = GetElement(By.CssSelector("[for|=\"slider_name_sell100\"]"));
+            
+            _action.MoveToElement(gharbilak);
+            _action.ScrollToElement(gharbilak).Perform();
+            Browser.ExecuteScript("window.scroll(0,5000)");
             gharbilak.Click();
 
 
@@ -102,7 +118,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                var element = GetElement(by);
+                var element = Browser.FindElement(by);
                 return element;
             }
             catch (OpenQA.Selenium.NotFoundException)
@@ -117,11 +133,33 @@ namespace Belem.Core.Services
             throw new NotFoundException("Can not find element");
         }
 
-        public void Dispose()
+        private void SetBrowser()
         {
-            Browser.Quit();
+            var linux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
+            var chromeOptions = new ChromeOptions();
+            //chromeOptions.AddArguments("headless");
+            chromeOptions.AddArguments("--start-maximized");
+
+            if (linux)
+            {
+                var path = "selenium";
+                var fileExiest = System.IO.File.Exists(path);
+                var browser = new ChromeDriver(path, chromeOptions);
+                Browser = browser;
+            }
+            else
+            {
+                var browser = new ChromeDriver(chromeOptions);
+                Browser = browser;
+            }
+
+            Actions action = new Actions(Browser);
+
+            _action = action;
         }
+
+       
     }
 
-  
+
 }

@@ -19,12 +19,9 @@ builder.Services.ConfigureDependencies(builder.Configuration);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
@@ -33,6 +30,13 @@ app.MapControllers();
 
 
 var telegramService = builder.Services.BuildServiceProvider().GetRequiredService<TelegramService>();
+
+#if DEBUG
+var period = 50000;
+
+#else   
+var period = 5000;
+#endif
 var timer = new Timer(async (state) =>
 {
     try
@@ -46,7 +50,7 @@ var timer = new Timer(async (state) =>
 },
 state: null,
         dueTime: 0,
-        period: 5000);
+        period: period);
 
 
 app.Run();

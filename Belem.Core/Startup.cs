@@ -22,7 +22,7 @@ namespace Belem.Core
             services.AddSingleton(new TelegramBotClient(appSettings.BotApiKey));
             services.AddSingleton<TelegramService>();
             services.AddSingleton<ImageProcessor>();
-            services.AddSingleton<TradingService>();
+            services.AddScoped<TradingService>();
             return services;
         }
     }

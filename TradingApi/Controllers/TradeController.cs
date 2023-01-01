@@ -16,9 +16,9 @@ namespace TradingApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Trade(TradeApiModel model)
+        public IActionResult Trade(TradeApiModel model)
         {
-            await _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
+             _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
             return Ok();
         }
     }

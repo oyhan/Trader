@@ -10,7 +10,7 @@ namespace Belem.Core.Services
         public (TimeSpan buyTime, TimeSpan sellTime, string token) GetTradeInfo(string imagePath)
         {
             var testImagePath = imagePath;
-            using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.LstmOnly))
+            using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
             {
                 using (var img = Pix.LoadFromFile(testImagePath))
                 {
