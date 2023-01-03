@@ -9,5 +9,13 @@
         public string[] TradingServers { get; set; }
         public Dictionary<string,string> Credentials { get; set; }
         public int EngageInPercent { get; set; } = 25;
+        public override string ToString()
+        {
+            var msg = @$"Domains= {string.Join(",", Domains)}
+EngagePercent = {EngageInPercent}%
+Allowed Chats = {string.Join(",", AllowedChats)}
+";
+            return msg; 
+        }
     }
 }

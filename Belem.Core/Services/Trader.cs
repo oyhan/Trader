@@ -106,10 +106,11 @@ namespace Belem.Core.Services
 
             var gharbilak = GetElement(By.CssSelector("[for|=\"slider_name_sell100\"]"));
             
-            _action.MoveToElement(gharbilak);
-            _action.ScrollToElement(gharbilak).Perform();
-            Browser.ExecuteScript("window.scroll(0,5000)");
-            gharbilak.Click();
+            //_action.MoveToElement(gharbilak);
+            //_action.ScrollToElement(gharbilak).Perform();
+            //Browser.ExecuteScript("window.scroll(0,5000)");
+            Browser.ExecuteScript("arguments[0].click();", gharbilak);
+            //gharbilak.Click();
 
 
         }
@@ -137,7 +138,8 @@ namespace Belem.Core.Services
         {
             var linux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             var chromeOptions = new ChromeOptions();
-            //chromeOptions.AddArguments("headless");
+            chromeOptions.AddArguments("no-sandbox");
+            chromeOptions.AddArguments("headless");
             chromeOptions.AddArguments("--start-maximized");
 
             if (linux)

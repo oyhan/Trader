@@ -18,7 +18,8 @@ namespace TradingApi.Controllers
         [HttpPost]
         public IActionResult Trade(TradeApiModel model)
         {
-             _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
+            Console.WriteLine($"Current time  {DateTime.Now.TimeOfDay}");
+            _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
             return Ok();
         }
     }

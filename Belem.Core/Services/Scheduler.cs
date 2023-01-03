@@ -14,7 +14,15 @@ namespace Belem.Core.Services
         public static void SetUpTimer(TimeSpan alertTime, Action action)
         {
             DateTime current = DateTime.Now;
+
+            
+            
             TimeSpan timeToGo = alertTime - current.TimeOfDay;
+
+
+
+            Console.WriteLine($"Times to go {timeToGo} for action {action.Method}");
+
             if (timeToGo < TimeSpan.Zero)
             {
                 return;//time already passed

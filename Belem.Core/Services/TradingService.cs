@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.DevTools.V106.CSS;
 using OpenQA.Selenium.Interactions;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -32,6 +33,7 @@ namespace Belem.Core.Services
 
         public void  SetSellAndButOrders(TimeSpan buyTime, TimeSpan sellTime, string token)
         {
+            Console.WriteLine($"Current Settings = {_appSettings}");
 
             foreach (var user in _appSettings.Credentials)
             {

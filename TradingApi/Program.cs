@@ -31,5 +31,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 Console.WriteLine(TimeZone.CurrentTimeZone.StandardName);
-
+Console.WriteLine("*****VERSION 1.0.0*******");
 app.Run();
