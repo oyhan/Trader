@@ -7,21 +7,13 @@ namespace Belem.Core.Services
     public class ImageProcessor
     {
 
-        public (TimeSpan buyTime, TimeSpan sellTime, string token) GetTradeInfo(string imagePath)
+        public async Task<(TimeSpan buyTime, TimeSpan sellTime, string token)> GetTradeInfo(string imagePath)
         {
-            var testImagePath = imagePath;
-            using (var engine = new TesseractEngine(@"./tessdata", "eng", EngineMode.Default))
-            {
-                using (var img = Pix.LoadFromFile(testImagePath))
-                {
-                    using (var page = engine.Process(img))
-                    {
-                        var text = page.GetText();
-                        return GetBuyAndSellTimes(text);
-                    }
-                }
-            }
+            var text = await $"tesseract {imagePath} stdout".Bash();
+
+            return GetBuyAndSellTimes(text);
         }
+
 
         public (TimeSpan buyTime, TimeSpan sellTime, string token) GetBuyAndSellTimes(string text)
         {
@@ -44,3 +36,4 @@ namespace Belem.Core.Services
 
     }
 }
+

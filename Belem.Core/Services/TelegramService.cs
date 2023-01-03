@@ -4,7 +4,7 @@ namespace Belem.Core.Services
 {
     public class TelegramService
     {
-        private const string SignalPath = "signal.jpg";
+        private const string SignalPath = "wwwroot/signal.jpg";
         private const string LastUpdate = "lastupdate.txt";
         private readonly TelegramBotClient _bot;
         private readonly ImageProcessor _imageProcessor;
@@ -54,7 +54,7 @@ namespace Belem.Core.Services
 
                             fileStream.Close();
 
-                            (TimeSpan buy, TimeSpan sell, string token) = _imageProcessor.GetTradeInfo(SignalPath);
+                            (TimeSpan buy, TimeSpan sell, string token) = await _imageProcessor.GetTradeInfo(SignalPath);
 
 
 

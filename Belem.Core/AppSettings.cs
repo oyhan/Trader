@@ -9,6 +9,10 @@
         public string[] TradingServers { get; set; }
         public Dictionary<string,string> Credentials { get; set; }
         public int EngageInPercent { get; set; } = 25;
+
+        public string OcrURL { get; set; }
+        public string SignalImageUrl { get; set; }
+
         public override string ToString()
         {
             var msg = @$"Domains= {string.Join(",", Domains)}

@@ -17,6 +17,10 @@ RUN dotnet build "Bot.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "Bot.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+RUN apt-get update && apt-get install -y python-dev tesseract-ocr g++ python-pip
+    
+RUN pip install https://github.com/goulu/pdfminer/zipball/e6ad15af79a26c31f4e384d8427b375c93b03533#egg=pdfminer.six
+
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
