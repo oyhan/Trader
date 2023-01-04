@@ -70,7 +70,7 @@ namespace Belem.Core
             }
             catch (TL.RpcException ex)
             {
-                ApplicationLogger.Log(ex.ToString());
+                await ApplicationLogger.Log(ex.ToString());
                 Console.WriteLine("You should login first");
                 return;
             }
@@ -134,6 +134,16 @@ namespace Belem.Core
         {
             var botService = webApplication.ApplicationServices.GetService<TelegramService>();
             ApplicationLogger.TelegramService = botService;
+
+
+        }
+
+        public static async Task SetTimers(this IApplicationBuilder webApplication)
+        {
+            var tradingService = webApplication.ApplicationServices.GetService<TradingService>();
+            await tradingService.SetupTimers();
+
+
         }
 
         //private static Task DisplayMessage(MessageBase messageBase, bool edit = false)

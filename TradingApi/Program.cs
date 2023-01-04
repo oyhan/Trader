@@ -36,4 +36,8 @@ await ApplicationLogger.Log("*****VERSION 3.0.0*******");
 
 app.UseTelegramLogger();
 //await app.UseTelegramClient();
+await app.SetTimers();
+
+
+
 app.Run();

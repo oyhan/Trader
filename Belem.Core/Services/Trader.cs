@@ -43,7 +43,7 @@ namespace Belem.Core.Services
             SetBuyOrder();
             BuyCoin();
             Thread.Sleep(3000);
-            ReleaseResouces();
+            await ReleaseResouces();
         }
 
 
@@ -63,7 +63,7 @@ namespace Belem.Core.Services
 
             Thread.Sleep(3000);
 
-            ReleaseResouces();
+            await ReleaseResouces();
         }
 
 
@@ -108,7 +108,7 @@ namespace Belem.Core.Services
                     }
                 }
             }
-            ReleaseResouces();
+            await ReleaseResouces();
             Thread.Sleep(2000);
             await ApplicationLogger.Log($"RedeemMoney************ FINISHED for {Username} on domain {DomainAddress}");
 
@@ -161,7 +161,7 @@ namespace Belem.Core.Services
                     }
                 }
             }
-            ReleaseResouces();
+            await ReleaseResouces();
             await ApplicationLogger.Log($"SubscribeMoney FINISHED ************ for {Username} on domain {DomainAddress}");
 
         }

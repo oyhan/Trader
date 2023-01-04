@@ -14,12 +14,8 @@ namespace Belem.Core.Services
         public static async Task SetUpTimer(TimeSpan alertTime, Func<Task> action)
         {
             DateTime current = DateTime.Now;
-
-            
             
             TimeSpan timeToGo = alertTime - current.TimeOfDay;
-
-
 
             await ApplicationLogger.Log($"Times to go {timeToGo} for action {action.Method}");
 
@@ -33,6 +29,26 @@ namespace Belem.Core.Services
             }, null, timeToGo, Timeout.InfiniteTimeSpan);
 
             _timers.Add(timer); 
+        }
+
+        public static async Task PeriodicTimer(TimeSpan alertTime, Func<Task> action , TimeSpan period)
+        {
+            DateTime current = DateTime.Now;
+
+            TimeSpan timeToGo = alertTime - current.TimeOfDay;
+
+            await ApplicationLogger.Log($"Times to go {timeToGo} for action {action.Method}");
+
+            if (timeToGo < TimeSpan.Zero)
+            {
+                return;//time already passed
+            }
+            var timer = new Timer(async x =>
+            {
+                await action();
+            }, null, timeToGo, period);
+
+            _timers.Add(timer);
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Belem.Core.Services
     public class TradingService
     {
         private readonly AppSettings _appSettings;
-        private static Dictionary<string, Trader> _traders;
 
         private Stack<string> Domains = new Stack<string>();
 
@@ -42,6 +41,23 @@ namespace Belem.Core.Services
 
                 await Scheduler.SetUpTimer(buyTime, trader.Buy);
                 await Scheduler.SetUpTimer(sellTime, trader.Sell);
+            }
+        }
+
+        public async Task SetupTimers()
+        {
+            await ApplicationLogger.Log($"SetTimers to redem and subscribe money....");
+
+            foreach (var user in _appSettings.Credentials)
+            {
+                await ApplicationLogger.Log($"****Setting up trader for user {user.Key}...");
+                var trader = new Trader("", user.Value, user.Key, Domains)
+                {
+                    Engage = _appSettings.EngageInPercent
+                };
+
+                await Scheduler.PeriodicTimer(new TimeSpan(18,10,0), trader.RedeemMoney, new TimeSpan(24, 0, 0));
+                await Scheduler.PeriodicTimer(new TimeSpan(22,15,0), trader.SubscribeMoney, new TimeSpan(24, 0, 0));
             }
         }
 
