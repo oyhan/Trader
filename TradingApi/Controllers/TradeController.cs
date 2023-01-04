@@ -10,17 +10,20 @@ namespace TradingApi.Controllers
     public class TradeController : ControllerBase
     {
         private readonly TradingService _tradingService;
+        private readonly AppSettings _appSettings;
 
-        public TradeController(TradingService tradingService)
+        public TradeController(TradingService tradingService, AppSettings appSettings)
         {
             _tradingService = tradingService;
+            _appSettings = appSettings;
         }
 
         [HttpPost]
         public async Task<IActionResult> Trade(TradeApiModel model)
         {
+            Console.WriteLine($"{_appSettings}");
             await ApplicationLogger.Log($"Current time  {DateTime.Now.TimeOfDay}");
-            _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
+            await   _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
             return Ok();
         }
     }
