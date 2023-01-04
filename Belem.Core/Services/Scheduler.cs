@@ -11,7 +11,7 @@ namespace Belem.Core.Services
         public static List<Timer> _timers { get; set; } = new List<Timer>();
 
 
-        public static void SetUpTimer(TimeSpan alertTime, Action action)
+        public static async Task SetUpTimer(TimeSpan alertTime, Func<Task> action)
         {
             DateTime current = DateTime.Now;
 
@@ -21,16 +21,15 @@ namespace Belem.Core.Services
 
 
 
-            Console.WriteLine($"Times to go {timeToGo} for action {action.Method}");
+            await ApplicationLogger.Log($"Times to go {timeToGo} for action {action.Method}");
 
             if (timeToGo < TimeSpan.Zero)
             {
                 return;//time already passed
             }
-            var timer = new Timer(x =>
+            var timer = new Timer(async x =>
             {
-                Console.WriteLine("FUCK!!@!@!@!@");
-                action();
+                await action();
             }, null, timeToGo, Timeout.InfiniteTimeSpan);
 
             _timers.Add(timer); 

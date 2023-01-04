@@ -6,9 +6,11 @@ namespace Belem.Core.Services
     {
         private const string SignalPath = "wwwroot/signal.jpg";
         private const string LastUpdate = "lastupdate.txt";
-        private readonly TelegramBotClient _bot;
+        private readonly  TelegramBotClient _bot;
         private readonly ImageProcessor _imageProcessor;
         private readonly AppSettings _appSettings;
+
+        
 
         public TelegramService(TelegramBotClient bot, AppSettings appSettings,
             ImageProcessor imageProcessor)
@@ -76,7 +78,7 @@ namespace Belem.Core.Services
 
         }
 
-        private async Task SendPMToAdmins(string messaga)
+        public async Task SendPMToAdmins(string messaga)
         {
             await _bot.SendTextMessageAsync(_appSettings.AllowedChats.First(), messaga);
         }

@@ -11,7 +11,7 @@ namespace Belem.Core.Services
     public class TradingService
     {
         private readonly AppSettings _appSettings;
-        private Dictionary<string, Trader> _traders;
+        private static Dictionary<string, Trader> _traders;
 
         private Stack<string> Domains = new Stack<string>();
 
@@ -19,10 +19,7 @@ namespace Belem.Core.Services
         {
             this._appSettings = appSettings;
 
-            if (appSettings.Credentials.Count > appSettings.Domains.Count())
-            {
-                throw new InvalidOperationException("no of domains is less than no of users");
-            }
+            
             foreach (var item in _appSettings.Domains)
             {
                 Domains.Push(item);
@@ -31,31 +28,20 @@ namespace Belem.Core.Services
 
         }
 
-        public void  SetSellAndButOrders(TimeSpan buyTime, TimeSpan sellTime, string token)
+        public async Task SetSellAndButOrders(TimeSpan buyTime, TimeSpan sellTime, string token)
         {
-            Console.WriteLine($"Current Settings = {_appSettings}");
+            await ApplicationLogger.Log($"Current Settings = {_appSettings}");
 
             foreach (var user in _appSettings.Credentials)
             {
-                for (int i = 0; i < 2; i++)
+                Console.Write($"****Setting up trader for user {user.Key}...");
+                var trader = new Trader(token, user.Value, user.Key , Domains)
                 {
-                    var trader = new Trader(Domains.Pop(), user.Value, user.Key);
+                    Engage = _appSettings.EngageInPercent
+                };
 
-                    trader.Token = token;
-
-                    trader.Engage = _appSettings.EngageInPercent;
-
-                    if (i==0)
-                    {
-                        Scheduler.SetUpTimer(buyTime, trader.Buy);
-                    }
-                    else
-                    {
-                        Scheduler.SetUpTimer(sellTime, trader.Sell);
-                    }
-                }
-               
-
+                await Scheduler.SetUpTimer(buyTime, trader.Buy);
+                await Scheduler.SetUpTimer(sellTime, trader.Sell);
             }
         }
 
@@ -74,7 +60,7 @@ namespace Belem.Core.Services
         //        if (linux)
         //        {
         //            var path = "selenium";
-                   
+
 
         //            var fileExiest = File.Exists(path);
         //            var browser = new ChromeDriver(path, chromeOptions);
@@ -96,6 +82,6 @@ namespace Belem.Core.Services
 
 
 
-       
+
     }
 }

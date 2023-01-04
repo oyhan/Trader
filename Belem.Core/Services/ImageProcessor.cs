@@ -21,7 +21,7 @@ namespace Belem.Core.Services
             var matches = Regex.Matches(text.ToLower(), pattern, RegexOptions.IgnoreCase);
             if (!matches.Any())
             {
-                throw new Exception("Can not detect signal man! common!");
+                throw new Exception("Can not detect signal man! common! invalid pic");
             }
 
             var targetLine = matches.Last().Value;

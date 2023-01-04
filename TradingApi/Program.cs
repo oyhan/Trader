@@ -1,5 +1,7 @@
 using Belem.Core;
+using Belem.Core.Services;
 using System.Configuration;
+using TradingApi.Controllers.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-Console.WriteLine(TimeZone.CurrentTimeZone.StandardName);
-Console.WriteLine("*****VERSION 1.0.0*******");
+await ApplicationLogger.Log(TimeZone.CurrentTimeZone.StandardName);
+await ApplicationLogger.Log("*****VERSION 3.0.0*******");
+
+app.UseTelegramLogger();
+//await app.UseTelegramClient();
 app.Run();

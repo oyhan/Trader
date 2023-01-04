@@ -25,7 +25,10 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "api_id": "59367",
+        "api_hash": "f6c420f08853d31e9050ee45229995a8",
+        "phone_number": "+989353469229"
       }
     },
     "Docker": {

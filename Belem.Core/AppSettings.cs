@@ -13,6 +13,8 @@
         public string OcrURL { get; set; }
         public string SignalImageUrl { get; set; }
 
+        public TelegramSettings TelegramSettings { get; set; }
+
         public override string ToString()
         {
             var msg = @$"Domains= {string.Join(",", Domains)}
@@ -22,4 +24,10 @@ Allowed Chats = {string.Join(",", AllowedChats)}
             return msg; 
         }
     }
+}
+
+public class TelegramSettings
+{
+    public int ApiId { get; set; }
+    public string ApiHash { get; set; }
 }

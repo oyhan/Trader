@@ -1,3 +1,4 @@
+using Belem.Core;
 using Belem.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using TradingApi.Controllers.Models;
@@ -16,9 +17,9 @@ namespace TradingApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Trade(TradeApiModel model)
+        public async Task<IActionResult> Trade(TradeApiModel model)
         {
-            Console.WriteLine($"Current time  {DateTime.Now.TimeOfDay}");
+            await ApplicationLogger.Log($"Current time  {DateTime.Now.TimeOfDay}");
             _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
             return Ok();
         }

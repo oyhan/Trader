@@ -17,6 +17,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.ConfigureDependencies(builder.Configuration);
 builder.Services.AddHttpClient();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,29 +31,33 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-var telegramService = builder.Services.BuildServiceProvider().GetRequiredService<TelegramService>();
+//var telegramService = builder.Services.BuildServiceProvider().GetRequiredService<TelegramService>();
 
-#if DEBUG
-var period = 50000;
+//#if DEBUG
+//var period = 50000;
 
-#else   
-var period = 5000;
-#endif
-var timer = new Timer(async (state) =>
-{
-    try
-    {
-        await telegramService.CheckMessages();
-    }
-    catch (Exception ex)
-    {
+//#else   
+//var period = 5000;
+//#endif
+//var timer = new Timer(async (state) =>
+//{
+//    try
+//    {
+//        await telegramService.CheckMessages();
+//    }
+//    catch (Exception ex)
+//    {
 
-    }
-},
-state: null,
-        dueTime: 0,
-        period: period);
+//    }
+//},
+//state: null,
+//        dueTime: 0,
+//        period: period);
 
+await ApplicationLogger.Log(TimeZone.CurrentTimeZone.StandardName);
+await ApplicationLogger.Log("*****VERSION 3.0.0*******");
+
+await app.UseTelegramClient();
 
 app.Run();
 
