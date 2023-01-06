@@ -56,7 +56,7 @@ namespace Belem.Core.Services
                     Engage = _appSettings.EngageInPercent
                 };
 
-                await Scheduler.PeriodicTimer(new TimeSpan(18,10,0), trader.RedeemMoney, new TimeSpan(24, 0, 0));
+                await Scheduler.PeriodicTimer(new TimeSpan(18,15,0), trader.RedeemMoney, new TimeSpan(24, 0, 0));
                 await Scheduler.PeriodicTimer(new TimeSpan(22,15,0), trader.SubscribeMoney, new TimeSpan(24, 0, 0));
             }
         }

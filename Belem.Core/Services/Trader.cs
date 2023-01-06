@@ -301,7 +301,7 @@ namespace Belem.Core.Services
             var baseUrl = string.Empty;
             while (!DomainStack.TryPop(out baseUrl))
             {
-                await ApplicationLogger.Log("wating for a url to be free...");
+                //await ApplicationLogger.Log("wating for a url to be free...");
                 Thread.Sleep(1000);
             }
             await ApplicationLogger.Log($"Domain {baseUrl} got free!");
