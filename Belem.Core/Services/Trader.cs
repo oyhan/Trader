@@ -123,7 +123,6 @@ namespace Belem.Core.Services
 
             Login(Username, Password);
 
-            Wait(4000);
             //Thread.Sleep(4000);
 
             var togg = GetElements(By.ClassName("toggle-lang"));
@@ -155,7 +154,6 @@ namespace Belem.Core.Services
                             ClickMe(maximumBtn);
 
                             ConfirmAgreement();
-                            Wait(2000);
 
                         }
                     }
@@ -168,13 +166,11 @@ namespace Belem.Core.Services
 
         private void ConfirmAgreement()
         {
-            Wait(2000);
             var btn = GetElement(By.XPath("//label[@for=\"earn-checkbox\"]"));
             if (btn is not null)
             {
                 ClickMe(btn);
             }
-            Wait(2000);
 
             var confirm = GetElements(By.CssSelector(".btn.button"))
                 .FirstOrDefault(b=>b.Text.ToLower().Contains("Confirm subscription".ToLower()));
@@ -191,11 +187,12 @@ namespace Belem.Core.Services
 
         }
 
-        private void Wait(int v)
-        {
-            var x = new WebDriverWait(Browser, TimeSpan.FromMilliseconds(v));
-            
-        }
+        //private void Wait(int v)
+        //{
+        //    var x = new WebDriverWait(Browser, TimeSpan.FromMilliseconds(v));
+        //    x.IgnoreExceptionTypes();
+        //    x.Until()
+        //}
 
         private async Task ReleaseResouces()
         {
@@ -268,7 +265,6 @@ namespace Belem.Core.Services
             catch (OpenQA.Selenium.NotFoundException)
             {
 
-                Thread.Sleep(10000);
                 Browser.Url = Browser.Url;
                 var element = Browser.FindElement(by);
                 return element;

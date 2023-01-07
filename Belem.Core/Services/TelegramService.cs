@@ -80,7 +80,10 @@ namespace Belem.Core.Services
 
         public async Task SendPMToAdmins(string messaga)
         {
-            await _bot.SendTextMessageAsync(_appSettings.AllowedChats.First(), messaga);
+            foreach (var admin in _appSettings.AllowedChats)
+            {
+                await _bot.SendTextMessageAsync(admin, messaga);
+            }
         }
     }
 }

@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using WTelegram;
+using System.Net.Http.Json;
+using Belem.Core.DTOs;
 
 namespace Belem.Core
 {
@@ -25,7 +27,7 @@ namespace Belem.Core
             var appConfig = configuration.GetSection("AppSettings");
             appConfig.Bind(appSettings);
 
-            if (appSettings.TelegramSettings?.ApiId!=null && appSettings.TelegramSettings?.ApiHash!=null)
+            if (appSettings.TelegramSettings?.ApiId != null && appSettings.TelegramSettings?.ApiHash != null)
             {
                 services.AddSingleton(new WTelegram.Client(appSettings.TelegramSettings.ApiId, appSettings.TelegramSettings.ApiHash));
             }
@@ -52,6 +54,7 @@ namespace Belem.Core
             var tgClient = webApplication.ApplicationServices.GetService<WTelegram.Client>();
             var imageProcessor = webApplication.ApplicationServices.GetService<ImageProcessor>();
             var botService = webApplication.ApplicationServices.GetService<TelegramService>();
+            var appSettings = webApplication.ApplicationServices.GetService<AppSettings>();
             ApplicationLogger.TelegramService = botService;
 
             try
@@ -106,19 +109,41 @@ namespace Belem.Core
                                         {
                                             (TimeSpan buy, TimeSpan sell, string token) = await imageProcessor.GetTradeInfo(filename);
 
-                                            await botService.SendPMToAdmins($"{buy} , {sell} ,{token}");
+                                            var tradeModel = new SetNewTradeDto()
+                                            {
+                                                BuyTime = buy,
+                                                SellTime = sell,
+                                                Token = token
+                                            };
 
+                                            await botService.SendPMToAdmins($"{buy} , {sell} ,{token}");
+                                            foreach (var tradeServer in appSettings.TradingServers)
+                                            {
+                                                using var httpClient = new HttpClient();
+                                                httpClient.BaseAddress = new Uri(tradeServer);
+                                                var result = await httpClient.PostAsJsonAsync("trade/trade", tradeModel);
+                                                if (result.IsSuccessStatusCode)
+                                                {
+                                                    await ApplicationLogger.Log($"Trade set on server {tradeServer}");
+                                                }
+                                                else
+                                                {
+                                                    var errorMessage = await result.Content.ReadAsStringAsync();
+                                                    await ApplicationLogger.Log($"Server {tradeServer} : Couldn't make a request to set trade {errorMessage}");
+
+                                                }
+                                            }
                                         }
                                         catch (Exception ex)
                                         {
                                             await botService.SendPMToAdmins(ex.ToString());
                                         }
-                                       
+
                                         //if (type is not Storage_FileType.unknown and not Storage_FileType.partial)
                                         //    System.IO.File.Move(filename, $"{photo.id}.{type}", true); // rename extension
                                     }
                                 }
-                               
+
                                 //await DisplayMessage(unm.message);
                             }
                             return;
