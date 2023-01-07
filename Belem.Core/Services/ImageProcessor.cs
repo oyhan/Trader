@@ -30,8 +30,23 @@ namespace Belem.Core.Services
 
 
             var token = targetLine.Substring(0, 3);
-            var buyTime = TimeSpan.Parse(targetLine.Substring(4, 5));
-            var sellTime = TimeSpan.Parse(targetLine.Substring(10, 5));
+            if (TimeSpan.TryParse(targetLine.AsSpan(4, 4), out var buyTime))
+            {
+
+            }
+            else
+            {
+                _ = TimeSpan.TryParse(targetLine.AsSpan(4, 5), out  buyTime);
+            }
+            if (TimeSpan.TryParse(targetLine.AsSpan(9, 4), out var sellTime) )
+            {
+
+            }
+            else
+            {
+                _ = TimeSpan.TryParse(targetLine.AsSpan(10, 5), out  sellTime);
+            }
+            
 
             return (buyTime, sellTime, token);
         }
