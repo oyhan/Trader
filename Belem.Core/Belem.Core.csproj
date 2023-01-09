@@ -31,9 +31,12 @@
 	</ItemGroup>
 	<ItemGroup>
 	  <None Remove="C:\Users\Ali\.nuget\packages\selenium.webdriver\4.7.0\build\..\manager\windows\selenium-manager.exe" />
-	  <None Remove="selenium\selenium-manager" />
+	  <None Remove="selenium\chromedriver" />
 	</ItemGroup>
 	<ItemGroup>
+	  <Content Include="selenium\chromedriver">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="selenium\selenium-manager">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </Content>

@@ -26,5 +26,13 @@ namespace TradingApi.Controllers
             await   _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
             return Ok();
         }
+
+
+        [HttpGet]
+        public async Task<IActionResult> Get()
+        {
+            Console.WriteLine(Request.Headers.UserAgent.ToString());
+            return Ok();
+        }
     }
 }

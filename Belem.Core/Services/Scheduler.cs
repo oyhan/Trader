@@ -42,7 +42,7 @@ namespace Belem.Core.Services
         {
             DateTime current = DateTime.Now;
 
-            TimeSpan timeToGo = alertTime - current.TimeOfDay;
+            TimeSpan timeToGo = alertTime - current.TimeOfDay < TimeSpan.Zero? period + (alertTime - current.TimeOfDay) : alertTime - current.TimeOfDay;
 
             await ApplicationLogger.Log($"Set schedule at  {alertTime} for action {action.Method}");
 

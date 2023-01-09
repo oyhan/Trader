@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using Telegram.Bot.Types;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
+using System.Security.Policy;
 
 namespace Belem.Core.Services
 {
@@ -34,83 +35,116 @@ namespace Belem.Core.Services
             DomainStack = domains;
         }
 
+       
+
         public async Task Buy()
         {
-            await ApplicationLogger.Log($"BUY************ for {Username} on domain {DomainAddress}");
-            await SetBrowser();
-            Login(Username, Password);
-            Thread.Sleep(3000);
-            SetBuyOrder();
-            BuyCoin();
-            Thread.Sleep(3000);
-            await ReleaseResouces();
+            try
+            {
+                await ApplicationLogger.Log($"BUY************ for {Username} on domain {DomainAddress}");
+                await SetBrowser();
+                Login(Username, Password);
+                Thread.Sleep(3000);
+                SetBuyOrder();
+                BuyCoin();
+                Thread.Sleep(3000);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            finally
+            {
+                await ReleaseResouces();
+
+            }
         }
 
 
 
         public async Task Sell()
         {
-            await ApplicationLogger.Log($"SELL************ for {Username} on domain {DomainAddress}");
-            await SetBrowser();
+            try
+            {
+                await ApplicationLogger.Log($"SELL************ for {Username} on domain {DomainAddress}");
+                await SetBrowser();
 
-            Login(Username, Password);
+                Login(Username, Password);
 
-            Thread.Sleep(3000);
+                Thread.Sleep(3000);
 
-            SetSellOrder();
+                SetSellOrder();
 
-            SellCoin();
+                SellCoin();
 
-            Thread.Sleep(3000);
+                Thread.Sleep(3000);
 
-            await ReleaseResouces();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            finally
+            {
+                await ReleaseResouces();
+
+            }
         }
 
 
         public async Task RedeemMoney()
         {
-            await ApplicationLogger.Log($"RedeemMoney************ for {Username} on domain {DomainAddress}");
-            await SetBrowser();
-
-
-
-            Login(Username, Password);
-
-            Thread.Sleep(4000);
-
-            var togg = GetElements(By.ClassName("toggle-lang"));
-            Browser.ExecuteScript("arguments[0].click();", togg.First());
-
-            Thread.Sleep(2000);
-
-
-            Browser.Url = $"{DomainAddress}/#/earn/account";
-            Thread.Sleep(2000);
-            var btn = GetElement(By.CssSelector(".btn.button"));
-            if (btn != null )
+            try
             {
-                if (btn.Text.ToLower().Contains("Early Redemption".ToLower()))
+                await ApplicationLogger.Log($"RedeemMoney************ for {Username} on domain {DomainAddress}");
+                await SetBrowser();
+
+
+
+                Login(Username, Password);
+
+                Thread.Sleep(4000);
+
+                var togg = GetElements(By.ClassName("toggle-lang"));
+                Browser.ExecuteScript("arguments[0].click();", togg.First());
+
+                Thread.Sleep(2000);
+
+
+                Browser.Url = $"{DomainAddress}/#/earn/account";
+                Thread.Sleep(2000);
+                var btn = GetElement(By.CssSelector(".btn.button"));
+                if (btn != null)
                 {
-                    Thread.Sleep(1000);
-                    ClickMe(btn);
-                    Thread.Sleep(1000);
-                    var confirmBtn = GetElement(By.XPath("//button[@type=\"submit\"]"));
-                    if (confirmBtn != null)
+                    if (btn.Text.ToLower().Contains("Early Redemption".ToLower()))
                     {
-                        if (confirmBtn.Text.ToLower().Contains("Confirm".ToLower()))
+                        Thread.Sleep(1000);
+                        ClickMe(btn);
+                        Thread.Sleep(1000);
+                        var confirmBtn = GetElement(By.XPath("//button[@type=\"submit\"]"));
+                        if (confirmBtn != null)
                         {
-                            Thread.Sleep(1500);
-                            ClickMe(confirmBtn);
-                            Thread.Sleep(1000);
+                            if (confirmBtn.Text.ToLower().Contains("Confirm".ToLower()))
+                            {
+                                Thread.Sleep(1500);
+                                ClickMe(confirmBtn);
+                                Thread.Sleep(1000);
 
 
+                            }
                         }
                     }
                 }
+                Thread.Sleep(2000);
+                await ApplicationLogger.Log($"RedeemMoney************ FINISHED for {Username} on domain {DomainAddress}");
             }
-            await ReleaseResouces();
-            Thread.Sleep(2000);
-            await ApplicationLogger.Log($"RedeemMoney************ FINISHED for {Username} on domain {DomainAddress}");
+            finally
+            {
+                await ReleaseResouces();
+
+            }
 
 
         }
@@ -118,49 +152,56 @@ namespace Belem.Core.Services
 
         public async Task SubscribeMoney()
         {
-            await ApplicationLogger.Log($"SubscribeMoney ************ for {Username} on domain {DomainAddress}");
-            await SetBrowser();
-
-            Login(Username, Password);
-
-            //Thread.Sleep(4000);
-
-            var togg = GetElements(By.ClassName("toggle-lang"));
-            Browser.ExecuteScript("arguments[0].click();", togg.First());
-
-            Thread.Sleep(2000);
-
-
-            Browser.Url = $"{DomainAddress}/#/earn";
-            Thread.Sleep(2000);
-            var btns = GetElements(By.CssSelector(".btn.button"));
-            Thread.Sleep(2000);
-            var btn = btns
-                .FirstOrDefault(b=> b.Text.ToLower().Contains("Subscription".ToLower()));
-            if (btn != null)
+            try
             {
+                await ApplicationLogger.Log($"SubscribeMoney ************ for {Username} on domain {DomainAddress}");
+                await SetBrowser();
+
+                Login(Username, Password);
+
+                //Thread.Sleep(4000);
+
+                var togg = GetElements(By.ClassName("toggle-lang"));
+                Browser.ExecuteScript("arguments[0].click();", togg.First());
+
+                Thread.Sleep(2000);
+
+
+                Browser.Url = $"{DomainAddress}/#/earn";
+                Thread.Sleep(2000);
+                var btns = GetElements(By.CssSelector(".btn.button"));
+                Thread.Sleep(2000);
+                var btn = btns
+                    .FirstOrDefault(b => b.Text.ToLower().Contains("Subscription".ToLower()));
+                if (btn != null)
                 {
-                    Thread.Sleep(4000);
-
-                    ClickMe(btn);
-                    Thread.Sleep(2000);
-                   
-                    var maximumBtn = GetElement(By.XPath("//span[@class=\"input-group-btn\"]"));
-                    if (maximumBtn != null)
                     {
-                        if (maximumBtn.Text.ToLower().Contains("Maximum".ToLower()))
+                        Thread.Sleep(4000);
+
+                        ClickMe(btn);
+                        Thread.Sleep(2000);
+
+                        var maximumBtn = GetElement(By.XPath("//span[@class=\"input-group-btn\"]"));
+                        if (maximumBtn != null)
                         {
-                            Thread.Sleep(2000);
-                            ClickMe(maximumBtn);
+                            if (maximumBtn.Text.ToLower().Contains("Maximum".ToLower()))
+                            {
+                                Thread.Sleep(2000);
+                                ClickMe(maximumBtn);
 
-                            ConfirmAgreement();
+                                ConfirmAgreement();
 
+                            }
                         }
                     }
                 }
+                await ApplicationLogger.Log($"SubscribeMoney FINISHED ************ for {Username} on domain {DomainAddress}");
             }
-            await ReleaseResouces();
-            await ApplicationLogger.Log($"SubscribeMoney FINISHED ************ for {Username} on domain {DomainAddress}");
+            finally
+            {
+                await ReleaseResouces();
+
+            }
 
         }
 
@@ -173,8 +214,8 @@ namespace Belem.Core.Services
             }
 
             var confirm = GetElements(By.CssSelector(".btn.button"))
-                .FirstOrDefault(b=>b.Text.ToLower().Contains("Confirm subscription".ToLower()));
-            if (confirm != null )
+                .FirstOrDefault(b => b.Text.ToLower().Contains("Confirm subscription".ToLower()));
+            if (confirm != null)
             {
                 ClickMe(confirm);
             }
@@ -292,7 +333,7 @@ namespace Belem.Core.Services
             throw new NotFoundException("Can not find element");
         }
 
-        private async Task  SetBrowser()
+        private async Task SetBrowser()
         {
             var baseUrl = string.Empty;
             while (!DomainStack.TryPop(out baseUrl))
@@ -308,11 +349,13 @@ namespace Belem.Core.Services
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArguments("no-sandbox");
             chromeOptions.AddArguments("headless");
+            var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76";
+            chromeOptions.AddArgument($"user-agent={userAgent}");
             chromeOptions.AddArguments("--start-maximized");
 
             if (linux)
             {
-                var path = "selenium";
+                var path = "/app/selenium";
                 var fileExiest = System.IO.File.Exists(path);
                 var browser = new ChromeDriver(path, chromeOptions);
                 Browser = browser;
