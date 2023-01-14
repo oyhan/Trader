@@ -23,22 +23,5 @@
 		<PackageReference Include="Tesseract" Version="5.2.0" />
 		<PackageReference Include="WTelegramClient" Version="3.2.1" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Content Remove="C:\Users\Ali\.nuget\packages\selenium.webdriver\4.7.0\build\..\manager\linux\selenium-manager" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="C:\Users\Ali\.nuget\packages\selenium.webdriver\4.7.0\build\..\manager\macos\selenium-manager" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Remove="C:\Users\Ali\.nuget\packages\selenium.webdriver\4.7.0\build\..\manager\windows\selenium-manager.exe" />
-	</ItemGroup>
-	<ItemGroup>
-	  <None Update="selenium\chromedriver">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	  <None Update="selenium\selenium-manager">
-	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  </None>
-	</ItemGroup>
 
 </Project>
