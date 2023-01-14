@@ -41,7 +41,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                await ApplicationLogger.Log($"BUY************ for {Username} on domain {DomainAddress}");
+                await ApplicationLogger.Log($"BUY************ for {Username} ");
                 await SetBrowser();
                 Login(Username, Password);
                 Thread.Sleep(3000);
@@ -51,7 +51,7 @@ namespace Belem.Core.Services
             }
             catch (Exception ex)
             {
-
+                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
                 throw;
             }
             finally
@@ -67,7 +67,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                await ApplicationLogger.Log($"SELL************ for {Username} on domain {DomainAddress}");
+                await ApplicationLogger.Log($"SELL************ for {Username} ");
                 await SetBrowser();
 
                 Login(Username, Password);
@@ -81,9 +81,9 @@ namespace Belem.Core.Services
                 Thread.Sleep(3000);
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
+                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
                 throw;
             }
             finally
@@ -140,10 +140,14 @@ namespace Belem.Core.Services
                 Thread.Sleep(2000);
                 await ApplicationLogger.Log($"RedeemMoney************ FINISHED for {Username} on domain {DomainAddress}");
             }
+            catch (Exception ex)
+            {
+                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
+                throw;
+            }
             finally
             {
                 await ReleaseResouces();
-
             }
 
 
@@ -197,6 +201,11 @@ namespace Belem.Core.Services
                 }
                 await ApplicationLogger.Log($"SubscribeMoney FINISHED ************ for {Username} on domain {DomainAddress}");
             }
+            catch (Exception ex)
+            {
+                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
+                throw;
+            }
             finally
             {
                 await ReleaseResouces();
@@ -239,7 +248,7 @@ namespace Belem.Core.Services
         {
             Browser.Quit();
             DomainStack.Push(DomainAddress);
-            await ApplicationLogger.Log($"put back domian {DomainAddress}");
+            await ApplicationLogger.Log($"put back domian {DomainAddress} for {Username} ");
         }
 
         private void SetBuyOrder()
