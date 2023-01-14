@@ -375,6 +375,8 @@ namespace Belem.Core.Services
                 Browser = browser;
             }
 
+            Browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+
             Actions action = new Actions(Browser);
 
             _action = action;
