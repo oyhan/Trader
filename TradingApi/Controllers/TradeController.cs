@@ -27,11 +27,30 @@ namespace TradingApi.Controllers
             return Ok();
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Buy(string token)
+        {
+            await _tradingService.Buy(token);
+            return Ok();
+        }
+        [HttpGet]
+        public async Task<IActionResult> Sell(string token)
+        {
+            await _tradingService.Sell(token);
+            return Ok();
+        }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Subscribe()
         {
-            Console.WriteLine(Request.Headers.UserAgent.ToString());
+            await _tradingService.SubscribeMoney();
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Redeem()
+        {
+            await _tradingService.RedeemMoney();
             return Ok();
         }
     }

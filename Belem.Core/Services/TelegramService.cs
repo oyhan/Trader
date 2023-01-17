@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using Microsoft.VisualBasic;
+using Telegram.Bot;
 
 namespace Belem.Core.Services
 {
@@ -83,6 +84,14 @@ namespace Belem.Core.Services
             foreach (var admin in _appSettings.AllowedChats)
             {
                 await _bot.SendTextMessageAsync(admin, messaga);
+            }
+        }
+
+        public async Task SendPhotoToAdmins(MemoryStream memoryStream,string caption)
+        {
+            foreach (var admin in _appSettings.AllowedChats)
+            {
+                await  _bot.SendPhotoAsync(admin,new Telegram.Bot.Types.InputFiles.InputOnlineFile(memoryStream), caption: caption);
             }
         }
     }

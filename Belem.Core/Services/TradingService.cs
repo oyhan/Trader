@@ -13,16 +13,19 @@ namespace Belem.Core.Services
         private readonly AppSettings _appSettings;
 
         private Stack<string> Domains = new Stack<string>();
+        private readonly IServiceProvider _serviceProvider;
 
-        public TradingService(AppSettings appSettings)
+
+        public TradingService(AppSettings appSettings, IServiceProvider serviceProvider)
         {
             this._appSettings = appSettings;
 
-            
+
             foreach (var item in _appSettings.Domains)
             {
                 Domains.Push(item);
             }
+            _serviceProvider = serviceProvider;
             //InitializeInstances();
 
         }
@@ -34,13 +37,43 @@ namespace Belem.Core.Services
             foreach (var user in _appSettings.Credentials)
             {
                 Console.Write($"****Setting up trader for user {user.Key}...");
-                var trader = new Trader(token, user.Value, user.Key , Domains)
+                var trader = new Trader(token, user.Value, user.Key , Domains, _serviceProvider)
                 {
                     Engage = _appSettings.EngageInPercent
                 };
 
                 await Scheduler.SetUpTimer(buyTime, trader.Buy);
                 await Scheduler.SetUpTimer(sellTime, trader.Sell);
+            }
+        }
+
+        public async Task Buy(string token)
+        {
+            await ApplicationLogger.Log($"Current Settings = {_appSettings}");
+
+            foreach (var user in _appSettings.Credentials)
+            {
+                Console.Write($"****Buy for {token} user {user.Key}...");
+                var trader = new Trader(token, user.Value, user.Key, Domains, _serviceProvider)
+                {
+                    Engage = _appSettings.EngageInPercent
+                };
+
+                await trader.Buy();
+            }
+        }
+        public async Task Sell(string token)
+        {
+            await ApplicationLogger.Log($"Current Settings = {_appSettings}");
+
+            foreach (var user in _appSettings.Credentials)
+            {
+                Console.Write($"****Sell {token} for user {user.Key}...");
+                var trader = new Trader(token, user.Value, user.Key, Domains, _serviceProvider)
+                {
+                    Engage = _appSettings.EngageInPercent
+                };
+                await trader.Sell();
             }
         }
 
@@ -51,7 +84,7 @@ namespace Belem.Core.Services
             foreach (var user in _appSettings.Credentials)
             {
                 await ApplicationLogger.Log($"****Setting up trader for user {user.Key}...");
-                var trader = new Trader("", user.Value, user.Key, Domains)
+                var trader = new Trader("", user.Value, user.Key, Domains, _serviceProvider)
                 {
                     Engage = _appSettings.EngageInPercent
                 };
@@ -61,6 +94,35 @@ namespace Belem.Core.Services
             }
         }
 
+        public async Task RedeemMoney()
+        {
+            await ApplicationLogger.Log($"SetTimers to redem and subscribe money....");
+
+            foreach (var user in _appSettings.Credentials)
+            {
+                await ApplicationLogger.Log($"****Setting up trader for user {user.Key}...");
+                var trader = new Trader("", user.Value, user.Key, Domains, _serviceProvider)
+                {
+                    Engage = _appSettings.EngageInPercent
+                };
+                await trader.RedeemMoney();
+            }
+        }
+
+        public async Task SubscribeMoney()
+        {
+            await ApplicationLogger.Log($"SetTimers to redem and subscribe money....");
+
+            foreach (var user in _appSettings.Credentials)
+            {
+                await ApplicationLogger.Log($"****Setting up trader for user {user.Key}...");
+                var trader = new Trader("", user.Value, user.Key, Domains, _serviceProvider)
+                {
+                    Engage = _appSettings.EngageInPercent
+                };
+                await trader.SubscribeMoney();
+            }
+        }
         //private void InitializeInstances()
         //{
         //    _traders = new Dictionary<string, Trader>();

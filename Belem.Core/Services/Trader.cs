@@ -11,11 +11,15 @@ using Telegram.Bot.Types;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System.Security.Policy;
+using Telegram.Bot;
+using Microsoft.Extensions.DependencyInjection;
+using TL.Methods;
 
 namespace Belem.Core.Services
 {
     public class Trader
     {
+        private const string BalanceHistoryPath = "#/finance/history";
         private Actions _action;
 
         public string Token { get; set; }
@@ -23,19 +27,22 @@ namespace Belem.Core.Services
         public string Password { get; private set; }
         public WebDriver Browser { get; private set; }
         public string DomainAddress { get; private set; }
+        private readonly IServiceProvider _serviceProvider;
+
 
         public int Engage { get; set; } = 25;
         public Stack<string> DomainStack { get; internal set; }
 
-        public Trader(string token, string password, string usename, Stack<string> domains)
+        public Trader(string token, string password, string usename, Stack<string> domains, IServiceProvider serviceProvider)
         {
             Token = token;
             Password = password;
             Username = usename;
             DomainStack = domains;
+            _serviceProvider = serviceProvider;
         }
 
-       
+
 
         public async Task Buy()
         {
@@ -80,6 +87,10 @@ namespace Belem.Core.Services
 
                 Thread.Sleep(3000);
 
+                await TakeAndSendScreenShot(BalanceHistoryPath);
+
+
+
             }
             catch (Exception ex)
             {
@@ -93,6 +104,23 @@ namespace Belem.Core.Services
             }
         }
 
+        private async Task TakeAndSendScreenShot(string path)
+        {
+            try
+            {
+                Browser.Navigate().GoToUrl($"{DomainAddress}/{path}");
+                Thread.Sleep(3000);
+                Browser.ExecuteScript("document.body.style.zoom = '0.8'");
+                Screenshot screenShot = Browser.GetScreenshot();
+                var tg = _serviceProvider.GetRequiredService<TelegramService>();
+                await tg.SendPhotoToAdmins(new MemoryStream(screenShot.AsByteArray),Username);
+            }
+            catch (Exception ex)
+            {
+                await ApplicationLogger.Log($"error in taking screen shot {Username} ex : { ex.Message}" );
+                throw;
+            }
+        }
 
         public async Task RedeemMoney()
         {
@@ -309,7 +337,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                var element = Browser.FindElement(by);
+                var element = Browser.FindElement(by,20);
                 return element;
             }
             catch (OpenQA.Selenium.NotFoundException)
@@ -347,7 +375,7 @@ namespace Belem.Core.Services
             var baseUrl = string.Empty;
             while (!DomainStack.TryPop(out baseUrl))
             {
-                //await ApplicationLogger.Log("wating for a url to be free...");
+                //await ApplicationLogger.Log($"wating for a url to be free... {Username}");
                 Thread.Sleep(1000);
             }
             await ApplicationLogger.Log($"Domain {baseUrl} got free!");
@@ -375,7 +403,7 @@ namespace Belem.Core.Services
                 Browser = browser;
             }
 
-            Browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
+            //Browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
             Actions action = new Actions(Browser);
 
