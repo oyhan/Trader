@@ -65,7 +65,7 @@ namespace Belem.Core.Services
             {
                 await ReleaseResouces();
 
-            }
+            } 
         }
 
 
@@ -85,7 +85,7 @@ namespace Belem.Core.Services
 
                 SellCoin();
 
-                Thread.Sleep(3000);
+                Thread.Sleep(5000);
 
                 await TakeAndSendScreenShot(BalanceHistoryPath);
 
@@ -282,7 +282,9 @@ namespace Belem.Core.Services
         private void SetBuyOrder()
         {
             Browser.Url = $"{DomainAddress}/#/exchange/{Token}_usdt";
-            Thread.Sleep(3000);
+            //Thread.Sleep(3000);
+            Browser.MonkeyPatchXMLHttpRequest();
+            Browser.CheckPendingRequests(20);
             var gharbilak = GetElement(By.CssSelector($"[for|=\"slider_name_buy{Engage}\"]"));
             gharbilak.Click();
         }
@@ -303,11 +305,18 @@ namespace Belem.Core.Services
         private void BuyCoin()
         {
             var submit = GetElement(By.CssSelector(".btn-submit.mb-btn.bg-buy"));
+            Browser.CheckPendingRequests(20);
             submit.Click();
         }
         private void SellCoin()
         {
+            Browser.CheckPendingRequests(20);
             var submit = GetElement(By.CssSelector(".btn-submit.mb-btn.bg-sell"));
+
+            if (submit is null)
+            {
+                throw new Exception("can not find submit to sell");
+            }
 
             Browser.ExecuteScript("arguments[0].click();", submit);
 
@@ -320,14 +329,21 @@ namespace Belem.Core.Services
         private void SetSellOrder()
         {
             Browser.Url = $"{DomainAddress}/#/exchange/{Token}_usdt";
-            Thread.Sleep(3000);
+            //Thread.Sleep(3000);
 
+            Browser.MonkeyPatchXMLHttpRequest();
+            Browser.CheckPendingRequests(20);
             var gharbilak = GetElement(By.CssSelector("[for|=\"slider_name_sell100\"]"));
 
+            if (gharbilak is null )
+            {
+                throw new Exception("can not find gharbilak for sell");
+            }
             //_action.MoveToElement(gharbilak);
             //_action.ScrollToElement(gharbilak).Perform();
             //Browser.ExecuteScript("window.scroll(0,5000)");
             Browser.ExecuteScript("arguments[0].click();", gharbilak);
+            
             //gharbilak.Click();
 
 
@@ -385,7 +401,7 @@ namespace Belem.Core.Services
             var linux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArguments("no-sandbox");
-            chromeOptions.AddArguments("headless");
+            //chromeOptions.AddArguments("headless");
             var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76";
             chromeOptions.AddArgument($"user-agent={userAgent}");
             chromeOptions.AddArguments("--start-maximized");
@@ -403,6 +419,7 @@ namespace Belem.Core.Services
                 Browser = browser;
             }
 
+            Browser.MonkeyPatchXMLHttpRequest();
             //Browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
 
             Actions action = new Actions(Browser);
