@@ -401,7 +401,7 @@ namespace Belem.Core.Services
             var linux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArguments("no-sandbox");
-            //chromeOptions.AddArguments("headless");
+            chromeOptions.AddArguments("headless");
             var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76";
             chromeOptions.AddArgument($"user-agent={userAgent}");
             chromeOptions.AddArguments("--start-maximized");
