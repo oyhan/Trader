@@ -111,8 +111,8 @@ namespace Belem.Core
 
                                             var tradeModel = new SetNewTradeDto()
                                             {
-                                                BuyTime = buy.Add(TimeSpan.FromMinutes(-2)),
-                                                SellTime = sell.Add(TimeSpan.FromMinutes(1)),
+                                                BuyTime = buy.Add(TimeSpan.FromMinutes(0)),
+                                                SellTime = sell.Add(TimeSpan.FromMinutes(0)),
                                                 Token = token
                                             };
 

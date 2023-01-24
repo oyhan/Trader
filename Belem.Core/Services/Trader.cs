@@ -27,11 +27,26 @@ namespace Belem.Core.Services
         public string Password { get; private set; }
         public WebDriver Browser { get; private set; }
         public string DomainAddress { get; private set; }
+
         private readonly IServiceProvider _serviceProvider;
 
+        private readonly TimeSpan _buyTime;
+        private readonly TimeSpan _sellTime;
 
         public int Engage { get; set; } = 25;
         public Stack<string> DomainStack { get; internal set; }
+
+        public Trader
+            (string token, string password, string usename,
+            Stack<string> domains, IServiceProvider serviceProvider,
+            TimeSpan buyTime, TimeSpan sellTime)
+            :this(token,password,usename,domains,serviceProvider)
+
+        {
+          
+            _buyTime = buyTime;
+            _sellTime = sellTime;
+        }
 
         public Trader(string token, string password, string usename, Stack<string> domains, IServiceProvider serviceProvider)
         {
@@ -40,9 +55,64 @@ namespace Belem.Core.Services
             Username = usename;
             DomainStack = domains;
             _serviceProvider = serviceProvider;
+            //_buyTime = buyTime;
+            //_sellTime = sellTime;
         }
+        public async Task Trade()
+        {
+            try
+            {
+                var now = DateTime.Now.TimeOfDay;
+                var waitToBuy = (_buyTime - now  );
+                var waitToSell = _sellTime -  now ;
+                if (waitToBuy <= TimeSpan.Zero)
+                {
+                    waitToBuy = TimeSpan.FromSeconds(5);
+                }
 
 
+                await ApplicationLogger.Log($"BUY************ for {Username} ");
+                await SetBrowser();
+                Login(Username, Password);
+                await Task.Delay(TimeSpan.FromSeconds(3));
+
+                GoToTradePage();
+                await Task.Delay(TimeSpan.FromSeconds(20));
+                await TakeAndSendScreenShot();
+                SetBuyOrder();
+
+
+
+                Thread.Sleep(waitToBuy);
+
+                BuyCoin();
+
+                await Task.Delay(3000);
+
+                SetSellOrder();
+
+
+
+                await Task.Delay(waitToSell);
+
+                SellCoin();
+
+                Thread.Sleep(3000);
+
+                await TakeAndSendScreenShot(BalanceHistoryPath);
+
+            }
+            catch (Exception ex)
+            {
+                await ApplicationLogger.Log($"exception for user {Username} executing method Trade exception : {ex.Message}");
+                throw;
+            }
+            finally
+            {
+                await ReleaseResouces();
+
+            }
+        }
 
         public async Task Buy()
         {
@@ -104,20 +174,24 @@ namespace Belem.Core.Services
             }
         }
 
-        private async Task TakeAndSendScreenShot(string path)
+        private async Task TakeAndSendScreenShot(string path = null)
         {
             try
             {
-                Browser.Navigate().GoToUrl($"{DomainAddress}/{path}");
-                Thread.Sleep(3000);
+                if (!string.IsNullOrEmpty(path))
+                {
+                    Browser.Navigate().GoToUrl($"{DomainAddress}/{path}");
+                    Thread.Sleep(3000);
+                }
                 Browser.ExecuteScript("document.body.style.zoom = '0.8'");
+                Thread.Sleep(2000);
                 Screenshot screenShot = Browser.GetScreenshot();
                 var tg = _serviceProvider.GetRequiredService<TelegramService>();
-                await tg.SendPhotoToAdmins(new MemoryStream(screenShot.AsByteArray),Username);
+                await tg.SendPhotoToAdmins(new MemoryStream(screenShot.AsByteArray), Username);
             }
             catch (Exception ex)
             {
-                await ApplicationLogger.Log($"error in taking screen shot {Username} ex : { ex.Message}" );
+                await ApplicationLogger.Log($"error in taking screen shot {Username} ex : {ex.Message}");
                 throw;
             }
         }
@@ -281,8 +355,13 @@ namespace Belem.Core.Services
 
         private void SetBuyOrder()
         {
-            Browser.Url = $"{DomainAddress}/#/exchange/{Token}_usdt";
-            //Thread.Sleep(3000);
+            var path = $"{DomainAddress}/#/exchange/{Token}_usdt";
+            if (Browser.Url.ToLower() != path.ToLower())
+            {
+                Browser.Url = path;
+                Thread.Sleep(3000);
+            }
+
             Browser.MonkeyPatchXMLHttpRequest();
             Browser.CheckPendingRequests(20);
             var gharbilak = GetElement(By.CssSelector($"[for|=\"slider_name_buy{Engage}\"]"));
@@ -328,8 +407,12 @@ namespace Belem.Core.Services
 
         private void SetSellOrder()
         {
-            Browser.Url = $"{DomainAddress}/#/exchange/{Token}_usdt";
-            //Thread.Sleep(3000);
+            var path = $"{DomainAddress}/#/exchange/{Token}_usdt";
+            if (Browser.Url.ToLower() != path.ToLower())
+            {
+                Browser.Url = path;
+                Thread.Sleep(3000);
+            }
 
             Browser.MonkeyPatchXMLHttpRequest();
             Browser.CheckPendingRequests(20);
@@ -401,13 +484,13 @@ namespace Belem.Core.Services
             var linux = RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
             var chromeOptions = new ChromeOptions();
             chromeOptions.AddArguments("no-sandbox");
-            chromeOptions.AddArguments("headless");
             var userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36 Edg/108.0.1462.76";
             chromeOptions.AddArgument($"user-agent={userAgent}");
             chromeOptions.AddArguments("--start-maximized");
 
             if (linux)
             {
+                chromeOptions.AddArguments("headless");
                 var path = "/app/selenium";
                 var fileExiest = System.IO.File.Exists(path);
                 var browser = new ChromeDriver(path, chromeOptions);
@@ -426,7 +509,11 @@ namespace Belem.Core.Services
 
             _action = action;
         }
-
+        private void GoToTradePage()
+        {
+            Browser.Url = $"{DomainAddress}/#/exchange/{Token}_usdt";
+            Thread.Sleep(TimeSpan.FromSeconds(10));
+        }
 
     }
 

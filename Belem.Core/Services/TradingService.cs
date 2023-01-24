@@ -2,6 +2,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.DevTools.V106.CSS;
+using OpenQA.Selenium.DevTools.V106.Input;
 using OpenQA.Selenium.Interactions;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -21,6 +22,7 @@ namespace Belem.Core.Services
             this._appSettings = appSettings;
 
 
+           
             foreach (var item in _appSettings.Domains)
             {
                 Domains.Push(item);
@@ -37,13 +39,17 @@ namespace Belem.Core.Services
             foreach (var user in _appSettings.Credentials)
             {
                 Console.Write($"****Setting up trader for user {user.Key}...");
-                var trader = new Trader(token, user.Value, user.Key , Domains, _serviceProvider)
+                var trader = new Trader(token, user.Value, user.Key , Domains, _serviceProvider,buyTime,sellTime)
                 {
                     Engage = _appSettings.EngageInPercent
                 };
+                var randomDrawBack = new Random().Next(2, 7);
+                var triggertime = buyTime.Add(TimeSpan.FromMinutes(-randomDrawBack));
 
-                await Scheduler.SetUpTimer(buyTime, trader.Buy);
-                await Scheduler.SetUpTimer(sellTime, trader.Sell);
+                triggertime = triggertime > DateTime.Now.TimeOfDay ? triggertime : DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(randomDrawBack));
+
+                await Scheduler.SetUpTimer(triggertime, trader.Trade);
+               
             }
         }
 
