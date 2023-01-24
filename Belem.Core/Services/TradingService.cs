@@ -43,7 +43,7 @@ namespace Belem.Core.Services
                 {
                     Engage = _appSettings.EngageInPercent
                 };
-                var randomDrawBack = new Random().Next(2, 7);
+                var randomDrawBack = new Random().Next(5, 7);
                 var triggertime = buyTime.Add(TimeSpan.FromMinutes(-randomDrawBack));
 
                 triggertime = triggertime > DateTime.Now.TimeOfDay ? triggertime : DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(randomDrawBack));

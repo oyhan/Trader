@@ -40,10 +40,10 @@ namespace Belem.Core.Services
             (string token, string password, string usename,
             Stack<string> domains, IServiceProvider serviceProvider,
             TimeSpan buyTime, TimeSpan sellTime)
-            :this(token,password,usename,domains,serviceProvider)
+            : this(token, password, usename, domains, serviceProvider)
 
         {
-          
+
             _buyTime = buyTime;
             _sellTime = sellTime;
         }
@@ -63,8 +63,8 @@ namespace Belem.Core.Services
             try
             {
                 var now = DateTime.Now.TimeOfDay;
-                var waitToBuy = (_buyTime - now  );
-                var waitToSell = _sellTime -  now ;
+                var waitToBuy = (_buyTime - now);
+                var waitToSell = _sellTime - now;
                 if (waitToBuy <= TimeSpan.Zero)
                 {
                     waitToBuy = TimeSpan.FromSeconds(5);
@@ -135,7 +135,7 @@ namespace Belem.Core.Services
             {
                 await ReleaseResouces();
 
-            } 
+            }
         }
 
 
@@ -365,7 +365,7 @@ namespace Belem.Core.Services
             Browser.MonkeyPatchXMLHttpRequest();
             Browser.CheckPendingRequests(20);
             var gharbilak = GetElement(By.CssSelector($"[for|=\"slider_name_buy{Engage}\"]"));
-            gharbilak.Click();
+            ClickMe(gharbilak);
         }
         private void Login(string username, string password)
         {
@@ -385,7 +385,8 @@ namespace Belem.Core.Services
         {
             var submit = GetElement(By.CssSelector(".btn-submit.mb-btn.bg-buy"));
             Browser.CheckPendingRequests(20);
-            submit.Click();
+            ClickMe(submit);
+
         }
         private void SellCoin()
         {
@@ -397,7 +398,8 @@ namespace Belem.Core.Services
                 throw new Exception("can not find submit to sell");
             }
 
-            Browser.ExecuteScript("arguments[0].click();", submit);
+            ClickMe(submit);
+
 
 
             //submit.Click();
@@ -418,15 +420,16 @@ namespace Belem.Core.Services
             Browser.CheckPendingRequests(20);
             var gharbilak = GetElement(By.CssSelector("[for|=\"slider_name_sell100\"]"));
 
-            if (gharbilak is null )
+            if (gharbilak is null)
             {
                 throw new Exception("can not find gharbilak for sell");
             }
             //_action.MoveToElement(gharbilak);
             //_action.ScrollToElement(gharbilak).Perform();
             //Browser.ExecuteScript("window.scroll(0,5000)");
-            Browser.ExecuteScript("arguments[0].click();", gharbilak);
-            
+
+            ClickMe(gharbilak);
+
             //gharbilak.Click();
 
 
@@ -436,7 +439,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                var element = Browser.FindElement(by,20);
+                var element = Browser.FindElement(by, 20);
                 return element;
             }
             catch (OpenQA.Selenium.NotFoundException)
