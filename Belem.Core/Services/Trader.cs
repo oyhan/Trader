@@ -65,8 +65,20 @@ namespace Belem.Core.Services
                 var now = DateTime.Now.TimeOfDay;
                 var waitToBuy = (_buyTime - now);
                 var waitToSell = _sellTime - now;
+                //sell time passed
+                if (now > _sellTime)
+                {
+                    await ApplicationLogger.Log("Time passed");
+                    return;
+                }
+                //if buy time passed more than 10 min
                 if (waitToBuy <= TimeSpan.Zero)
                 {
+                    if (waitToBuy.TotalMinutes > 10)
+                    {
+                        await ApplicationLogger.Log("Buy time passed more than 10 min");
+                        return;
+                    }
                     waitToBuy = TimeSpan.FromSeconds(5);
                 }
 
