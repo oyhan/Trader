@@ -22,7 +22,7 @@ namespace TradingApi.Controllers
         public async Task<IActionResult> Trade(TradeApiModel model)
         {
             Console.WriteLine($"{_appSettings}");
-            await ApplicationLogger.Log($"Current time  {DateTime.Now.TimeOfDay}");
+            await ApplicationLogger.LogInfo($"Current time  {DateTime.Now.TimeOfDay}");
             await   _tradingService.SetSellAndButOrders(model.BuyTime, model.SellTime, model.Token);
             return Ok();
         }

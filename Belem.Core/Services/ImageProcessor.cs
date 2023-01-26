@@ -9,9 +9,9 @@ namespace Belem.Core.Services
 
         public async Task<(TimeSpan buyTime, TimeSpan sellTime, string token)> GetTradeInfo(string imagePath)
         {
-            await ApplicationLogger.Log($"image path {imagePath}");
+            await ApplicationLogger.LogInfo($"image path {imagePath}");
             var text = await $"tesseract {imagePath} stdout".Bash();
-            await ApplicationLogger.Log($"text mined from pic {text}");
+            await ApplicationLogger.LogInfo($"text mined from pic {text}");
 
             return GetBuyAndSellTimes(text);
         }

@@ -54,8 +54,8 @@ app.MapControllers();
 //        dueTime: 0,
 //        period: period);
 
-await ApplicationLogger.Log(TimeZone.CurrentTimeZone.StandardName);
-await ApplicationLogger.Log("*****VERSION 3.0.0*******");
+await ApplicationLogger.LogInfo(TimeZone.CurrentTimeZone.StandardName);
+await ApplicationLogger.LogInfo("*****VERSION 3.0.0*******");
 
 await app.UseTelegramClient();
 

@@ -14,6 +14,7 @@ using System.Security.Policy;
 using Telegram.Bot;
 using Microsoft.Extensions.DependencyInjection;
 using TL.Methods;
+using System.Drawing;
 
 namespace Belem.Core.Services
 {
@@ -62,52 +63,62 @@ namespace Belem.Core.Services
         {
             try
             {
+
+
                 var now = DateTime.Now.TimeOfDay;
-                var waitToBuy = (_buyTime - now);
-                var waitToSell = _sellTime - now;
-                //sell time passed
                 if (now > _sellTime)
                 {
-                    await ApplicationLogger.Log("Time passed");
+                    await ApplicationLogger.LogInfo("Time passed");
                     return;
                 }
-                //if buy time passed more than 10 min
-                if (waitToBuy <= TimeSpan.Zero)
-                {
-                    if (waitToBuy.TotalMinutes > 10)
-                    {
-                        await ApplicationLogger.Log("Buy time passed more than 10 min");
-                        return;
-                    }
-                    waitToBuy = TimeSpan.FromSeconds(5);
-                }
-
-
-                await ApplicationLogger.Log($"BUY************ for {Username} ");
+                await ApplicationLogger.LogInfo($"BUY************ for {Username} ");
                 await SetBrowser();
                 Login(Username, Password);
                 await Task.Delay(TimeSpan.FromSeconds(3));
 
                 GoToTradePage();
                 await Task.Delay(TimeSpan.FromSeconds(20));
-                await TakeAndSendScreenShot();
                 SetBuyOrder();
+                await TakeAndSendScreenShot();
+
+                now = DateTime.Now.TimeOfDay;
+
+                var waitToBuy = (_buyTime - now);
+                //sell time passed    
+                //if buy time passed more than 10 min
+                if (waitToBuy <= TimeSpan.Zero)
+                {
+                    if (waitToBuy.TotalMinutes > 10)
+                    {
+                        await ApplicationLogger.LogInfo("Buy time passed more than 10 min");
+                        return;
+                    }
+                    waitToBuy = TimeSpan.FromSeconds(5);
+                }
 
 
 
                 Thread.Sleep(waitToBuy);
 
                 BuyCoin();
+                await TakeAndSendScreenShot();
 
                 await Task.Delay(3000);
 
                 SetSellOrder();
 
+                now = DateTime.Now.TimeOfDay;
+                var waitToSell = _sellTime - now;
 
+                if (waitToSell <= TimeSpan.Zero)
+                {
 
+                    waitToBuy = TimeSpan.FromSeconds(2);
+                }
                 await Task.Delay(waitToSell);
 
                 SellCoin();
+                await TakeAndSendScreenShot();
 
                 Thread.Sleep(3000);
 
@@ -116,7 +127,7 @@ namespace Belem.Core.Services
             }
             catch (Exception ex)
             {
-                await ApplicationLogger.Log($"exception for user {Username} executing method Trade exception : {ex.Message}");
+                await ApplicationLogger.LogInfo($"exception for user {Username} executing method Trade exception : {ex.Message}");
                 throw;
             }
             finally
@@ -130,7 +141,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                await ApplicationLogger.Log($"BUY************ for {Username} ");
+                await ApplicationLogger.LogInfo($"BUY************ for {Username} ");
                 await SetBrowser();
                 Login(Username, Password);
                 Thread.Sleep(3000);
@@ -140,7 +151,7 @@ namespace Belem.Core.Services
             }
             catch (Exception ex)
             {
-                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
+                await ApplicationLogger.LogInfo($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
                 throw;
             }
             finally
@@ -156,7 +167,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                await ApplicationLogger.Log($"SELL************ for {Username} ");
+                await ApplicationLogger.LogInfo($"SELL************ for {Username} ");
                 await SetBrowser();
 
                 Login(Username, Password);
@@ -176,7 +187,7 @@ namespace Belem.Core.Services
             }
             catch (Exception ex)
             {
-                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
+                await ApplicationLogger.LogInfo($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
                 throw;
             }
             finally
@@ -203,7 +214,7 @@ namespace Belem.Core.Services
             }
             catch (Exception ex)
             {
-                await ApplicationLogger.Log($"error in taking screen shot {Username} ex : {ex.Message}");
+                await ApplicationLogger.LogInfo($"error in taking screen shot {Username} ex : {ex.Message}");
                 throw;
             }
         }
@@ -212,7 +223,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                await ApplicationLogger.Log($"RedeemMoney************ for {Username} on domain {DomainAddress}");
+                await ApplicationLogger.LogInfo($"RedeemMoney************ for {Username} on domain {DomainAddress}");
                 await SetBrowser();
 
 
@@ -252,11 +263,11 @@ namespace Belem.Core.Services
                     }
                 }
                 Thread.Sleep(2000);
-                await ApplicationLogger.Log($"RedeemMoney************ FINISHED for {Username} on domain {DomainAddress}");
+                await ApplicationLogger.LogInfo($"RedeemMoney************ FINISHED for {Username} on domain {DomainAddress}");
             }
             catch (Exception ex)
             {
-                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
+                await ApplicationLogger.LogInfo($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
                 throw;
             }
             finally
@@ -272,7 +283,7 @@ namespace Belem.Core.Services
         {
             try
             {
-                await ApplicationLogger.Log($"SubscribeMoney ************ for {Username} on domain {DomainAddress}");
+                await ApplicationLogger.LogInfo($"SubscribeMoney ************ for {Username} on domain {DomainAddress}");
                 await SetBrowser();
 
                 Login(Username, Password);
@@ -313,11 +324,11 @@ namespace Belem.Core.Services
                         }
                     }
                 }
-                await ApplicationLogger.Log($"SubscribeMoney FINISHED ************ for {Username} on domain {DomainAddress}");
+                await ApplicationLogger.LogInfo($"SubscribeMoney FINISHED ************ for {Username} on domain {DomainAddress}");
             }
             catch (Exception ex)
             {
-                await ApplicationLogger.Log($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
+                await ApplicationLogger.LogInfo($"exception for user {Username} executing method {System.Reflection.MethodBase.GetCurrentMethod().Name} exception : {ex.Message}");
                 throw;
             }
             finally
@@ -362,7 +373,7 @@ namespace Belem.Core.Services
         {
             Browser.Quit();
             DomainStack.Push(DomainAddress);
-            await ApplicationLogger.Log($"put back domian {DomainAddress} for {Username} ");
+            await ApplicationLogger.LogInfo($"put back domian {DomainAddress} for {Username} ");
         }
 
         private void SetBuyOrder()
@@ -457,8 +468,9 @@ namespace Belem.Core.Services
             catch (OpenQA.Selenium.NotFoundException)
             {
 
-                Browser.Url = Browser.Url;
-                var element = Browser.FindElement(by);
+                //Browser.Url = Browser.Url;
+                Browser.Navigate().Refresh();
+                var element = Browser.FindElement(by, 30);
                 return element;
             }
 
@@ -475,8 +487,9 @@ namespace Belem.Core.Services
             catch (OpenQA.Selenium.NotFoundException)
             {
 
+                Browser.Navigate().Refresh();
                 Thread.Sleep(10000);
-                Browser.Url = Browser.Url;
+                //Browser.Url = Browser.Url;
                 var element = Browser.FindElements(by);
                 return element;
             }
@@ -492,7 +505,7 @@ namespace Belem.Core.Services
                 //await ApplicationLogger.Log($"wating for a url to be free... {Username}");
                 Thread.Sleep(1000);
             }
-            await ApplicationLogger.Log($"Domain {baseUrl} got free!");
+            await ApplicationLogger.LogInfo($"Domain {baseUrl} got free!");
 
             DomainAddress = baseUrl;
 
@@ -503,8 +516,16 @@ namespace Belem.Core.Services
             chromeOptions.AddArgument($"user-agent={userAgent}");
             chromeOptions.AddArguments("--start-maximized");
 
+
+
             if (linux)
             {
+                var profilePath = $"/usr/root/{Username}/browsing";
+                if (!Directory.Exists(profilePath))
+                {
+                    Directory.CreateDirectory(profilePath);
+                }
+                chromeOptions.AddArguments($"user-data-dir={profilePath}");
                 chromeOptions.AddArguments("headless");
                 var path = "/app/selenium";
                 var fileExiest = System.IO.File.Exists(path);
@@ -513,13 +534,17 @@ namespace Belem.Core.Services
             }
             else
             {
+                var profilePath = $"c:/profile/{Username}/browsing";
+                if (!Directory.Exists(profilePath))
+                {
+                    Directory.CreateDirectory(profilePath);
+                }
+                chromeOptions.AddArguments($"user-data-dir={profilePath}");
                 var browser = new ChromeDriver(chromeOptions);
                 Browser = browser;
             }
 
-            Browser.MonkeyPatchXMLHttpRequest();
-            //Browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
-
+            Browser.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(10);
             Actions action = new Actions(Browser);
 
             _action = action;

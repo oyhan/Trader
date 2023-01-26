@@ -56,6 +56,8 @@ namespace Belem.Core
             var botService = webApplication.ApplicationServices.GetService<TelegramService>();
             var appSettings = webApplication.ApplicationServices.GetService<AppSettings>();
             ApplicationLogger.TelegramService = botService;
+            ApplicationLogger.LogLevel = appSettings.LogLevel;
+
 
             try
             {
@@ -73,7 +75,7 @@ namespace Belem.Core
             }
             catch (TL.RpcException ex)
             {
-                await ApplicationLogger.Log(ex.ToString());
+                await ApplicationLogger.LogInfo(ex.ToString());
                 Console.WriteLine("You should login first");
                 return;
             }
@@ -99,11 +101,11 @@ namespace Belem.Core
                                     {
 
                                         var filename = $"signal.jpg";
-                                        await ApplicationLogger.Log("Downloading " + filename);
+                                        await ApplicationLogger.LogInfo("Downloading " + filename);
                                         using var fileStream = System.IO.File.Create(filename);
                                         var type = await tgClient.DownloadFileAsync(photo, fileStream);
                                         fileStream.Close(); // necessary for the renaming
-                                        await ApplicationLogger.Log("Download finished");
+                                        await ApplicationLogger.LogInfo("Download finished");
 
                                         try
                                         {
@@ -124,12 +126,12 @@ namespace Belem.Core
                                                 var result = await httpClient.PostAsJsonAsync("trade/trade", tradeModel);
                                                 if (result.IsSuccessStatusCode)
                                                 {
-                                                    await ApplicationLogger.Log($"Trade set on server {tradeServer}");
+                                                    await ApplicationLogger.LogInfo($"Trade set on server {tradeServer}");
                                                 }
                                                 else
                                                 {
                                                     var errorMessage = await result.Content.ReadAsStringAsync();
-                                                    await ApplicationLogger.Log($"Server {tradeServer} : Couldn't make a request to set trade {errorMessage}");
+                                                    await ApplicationLogger.LogInfo($"Server {tradeServer} : Couldn't make a request to set trade {errorMessage}");
 
                                                 }
                                             }

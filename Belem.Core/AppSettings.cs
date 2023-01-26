@@ -10,6 +10,8 @@
         public Dictionary<string,string> Credentials { get; set; }
         public int EngageInPercent { get; set; } = 25;
 
+        public string LogLevel { get; set; } = LogLevels.Info;
+
         public string OcrURL { get; set; }
         public string SignalImageUrl { get; set; }
 

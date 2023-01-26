@@ -34,7 +34,7 @@ namespace Belem.Core.Services
 
         public async Task SetSellAndButOrders(TimeSpan buyTime, TimeSpan sellTime, string token)
         {
-            await ApplicationLogger.Log($"Current Settings = {_appSettings}");
+            await ApplicationLogger.LogInfo($"Current Settings = {_appSettings}");
 
             foreach (var user in _appSettings.Credentials)
             {
@@ -44,7 +44,7 @@ namespace Belem.Core.Services
                     Engage = _appSettings.EngageInPercent
                 };
                 var randomDrawBack = new Random().Next(5, 7);
-                var triggertime = buyTime.Add(TimeSpan.FromMinutes(-randomDrawBack));
+                var triggertime = DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(randomDrawBack));
 
                 triggertime = triggertime > DateTime.Now.TimeOfDay ? triggertime : DateTime.Now.TimeOfDay.Add(TimeSpan.FromSeconds(randomDrawBack));
 
@@ -55,7 +55,7 @@ namespace Belem.Core.Services
 
         public async Task Buy(string token)
         {
-            await ApplicationLogger.Log($"Current Settings = {_appSettings}");
+            await ApplicationLogger.LogInfo($"Current Settings = {_appSettings}");
 
             foreach (var user in _appSettings.Credentials)
             {
@@ -70,7 +70,7 @@ namespace Belem.Core.Services
         }
         public async Task Sell(string token)
         {
-            await ApplicationLogger.Log($"Current Settings = {_appSettings}");
+            await ApplicationLogger.LogInfo($"Current Settings = {_appSettings}");
 
             foreach (var user in _appSettings.Credentials)
             {
@@ -85,11 +85,11 @@ namespace Belem.Core.Services
 
         public async Task SetupTimers()
         {
-            await ApplicationLogger.Log($"SetTimers to redem and subscribe money....");
+            await ApplicationLogger.LogInfo($"SetTimers to redem and subscribe money....");
 
             foreach (var user in _appSettings.Credentials)
             {
-                await ApplicationLogger.Log($"****Setting up trader for user {user.Key}...");
+                await ApplicationLogger.LogInfo($"****Setting up trader for user {user.Key}...");
                 var trader = new Trader("", user.Value, user.Key, Domains, _serviceProvider)
                 {
                     Engage = _appSettings.EngageInPercent
@@ -102,11 +102,11 @@ namespace Belem.Core.Services
 
         public async Task RedeemMoney()
         {
-            await ApplicationLogger.Log($"SetTimers to redem and subscribe money....");
+            await ApplicationLogger.LogInfo($"SetTimers to redem and subscribe money....");
 
             foreach (var user in _appSettings.Credentials)
             {
-                await ApplicationLogger.Log($"****Setting up trader for user {user.Key}...");
+                await ApplicationLogger.LogInfo($"****Setting up trader for user {user.Key}...");
                 var trader = new Trader("", user.Value, user.Key, Domains, _serviceProvider)
                 {
                     Engage = _appSettings.EngageInPercent
@@ -117,11 +117,11 @@ namespace Belem.Core.Services
 
         public async Task SubscribeMoney()
         {
-            await ApplicationLogger.Log($"SetTimers to redem and subscribe money....");
+            await ApplicationLogger.LogInfo($"SetTimers to redem and subscribe money....");
 
             foreach (var user in _appSettings.Credentials)
             {
-                await ApplicationLogger.Log($"****Setting up trader for user {user.Key}...");
+                await ApplicationLogger.LogInfo($"****Setting up trader for user {user.Key}...");
                 var trader = new Trader("", user.Value, user.Key, Domains, _serviceProvider)
                 {
                     Engage = _appSettings.EngageInPercent

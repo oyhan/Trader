@@ -17,7 +17,7 @@ namespace Belem.Core.Services
 
             TimeSpan timeToGo = alertTime - current.TimeOfDay;
 
-            await ApplicationLogger.Log($"Times to go {timeToGo} for action {action.Method}");
+            await ApplicationLogger.LogInfo($"Times to go {timeToGo} for action {action.Method}");
 
             if (timeToGo < TimeSpan.Zero)
             {
@@ -31,7 +31,7 @@ namespace Belem.Core.Services
                 }
                 catch (Exception ex)
                 {
-                    await ApplicationLogger.Log($"exception in scheduled task {action.Method.Name}** {ex} ");
+                    await ApplicationLogger.LogInfo($"exception in scheduled task {action.Method.Name}** {ex} ");
                 }
             }, null, timeToGo, Timeout.InfiniteTimeSpan);
 
@@ -44,7 +44,7 @@ namespace Belem.Core.Services
 
             TimeSpan timeToGo = alertTime - current.TimeOfDay < TimeSpan.Zero? period + (alertTime - current.TimeOfDay) : alertTime - current.TimeOfDay;
 
-            await ApplicationLogger.Log($"Set schedule at  {alertTime} for action {action.Method}");
+            await ApplicationLogger.LogInfo($"Set schedule at  {alertTime} for action {action.Method}");
 
             if (timeToGo < TimeSpan.Zero)
             {
@@ -58,15 +58,15 @@ namespace Belem.Core.Services
                 }
                 catch (Exception ex)
                 {
-                    await ApplicationLogger.Log($"exception in scheduled task {action.Method.Name}** {ex} ");
-                    await ApplicationLogger.Log("Trying to do it anther round");
+                    await ApplicationLogger.LogInfo($"exception in scheduled task {action.Method.Name}** {ex} ");
+                    await ApplicationLogger.LogInfo("Trying to do it anther round");
                     try
                     {
                         await action();
                     }
                     catch (Exception ex2)
                     {
-                        await ApplicationLogger.Log($"Second exception for task {action.Method.Name} we leave it alone then ... {ex2}" +
+                        await ApplicationLogger.LogInfo($"Second exception for task {action.Method.Name} we leave it alone then ... {ex2}" +
                             $"** {ex} ");
 
                         

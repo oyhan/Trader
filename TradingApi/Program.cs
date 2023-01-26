@@ -31,8 +31,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-await ApplicationLogger.Log(TimeZone.CurrentTimeZone.StandardName);
-await ApplicationLogger.Log("*****VERSION 3.0.0*******");
+await ApplicationLogger.LogInfo(TimeZone.CurrentTimeZone.StandardName);
+await ApplicationLogger.LogInfo("*****VERSION 3.0.0*******");
 
 app.UseTelegramLogger();
 //await app.UseTelegramClient();
