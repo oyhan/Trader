@@ -1,6 +1,7 @@
 using Belem.Core;
 using Belem.Core.Services;
 using Microsoft.AspNetCore.Mvc;
+using OpenQA.Selenium.DevTools.V106.Network;
 using TradingApi.Controllers.Models;
 
 namespace TradingApi.Controllers
@@ -11,11 +12,13 @@ namespace TradingApi.Controllers
     {
         private readonly TradingService _tradingService;
         private readonly AppSettings _appSettings;
+        private readonly IHostApplicationLifetime _appliction;
 
-        public TradeController(TradingService tradingService, AppSettings appSettings)
+        public TradeController(TradingService tradingService, AppSettings appSettings, IHostApplicationLifetime appliction)
         {
             _tradingService = tradingService;
             _appSettings = appSettings;
+            _appliction = appliction;
         }
 
         [HttpPost]
@@ -52,6 +55,14 @@ namespace TradingApi.Controllers
         {
             await _tradingService.RedeemMoney();
             return Ok();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Reboot()
+        {
+            _appliction.StopApplication();
+
+            return Ok("rebooted");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic;
+using System.Net.Http.Json;
 using Telegram.Bot;
 
 namespace Belem.Core.Services
@@ -44,6 +45,12 @@ namespace Belem.Core.Services
 
                     if (_appSettings.AllowedChats.Contains(update?.Message?.Chat.Id.ToString()))
                     {
+                        var command = update?.Message?.Text;
+                        
+                        if (command is not null)
+                        {
+                           await ExecuteCommand(command);
+                        }
                         var photo = update?.Message?.Photo;
                         if (photo != null)
                         {
@@ -77,6 +84,65 @@ namespace Belem.Core.Services
                 await SendPMToAdmins(ex.ToString());
             }
 
+        }
+
+        private async Task ExecuteCommand(string command)
+        {
+            var sections = command.Split(" ");
+            if (sections.Length<2)
+            {
+                await ApplicationLogger.LogInfo("can not execute command less than 2 part");
+                return;
+            }
+            var toplevel = sections[0];
+            var function = sections[1];
+            if (function.ToLower()=="server")
+            {
+                foreach (var tradeServer in _appSettings.TradingServers)
+                {
+                    using var httpClient = new HttpClient();
+                    httpClient.BaseAddress = new Uri(tradeServer);
+                    var result = await httpClient.GetAsync($"{toplevel}/{function}");
+                    if (result.IsSuccessStatusCode)
+                    {
+                        await ApplicationLogger.LogInfo($"command executed with result {await result.Content.ReadAsStringAsync()} on server {tradeServer}");
+                    }
+                    else
+                    {
+                        var errorMessage = await result.Content.ReadAsStringAsync();
+                        await ApplicationLogger.LogInfo($"Server {tradeServer} : Couldn't make a request to set trade {errorMessage}");
+
+                    }
+                }
+            }
+
+            if (function.ToLower()== "buy" || function.ToLower()=="sell")
+            {
+                if (sections.Length < 3)
+                {
+                    await ApplicationLogger.LogError("token needed"); 
+                    return;
+                }
+                var token = sections[2];
+
+                foreach (var tradeServer in _appSettings.TradingServers)
+                {
+                    using var httpClient = new HttpClient();
+                    httpClient.Timeout = TimeSpan.FromMinutes(3);
+                    httpClient.BaseAddress = new Uri(tradeServer);
+                    var result = await httpClient.GetAsync($"{toplevel}/{function}?token={token}");
+                    if (result.IsSuccessStatusCode)
+                    {
+                        await ApplicationLogger.LogInfo($"command executed with result {await result.Content.ReadAsStringAsync()} on server {tradeServer}");
+                    }
+                    else
+                    {
+                        var errorMessage = await result.Content.ReadAsStringAsync();
+                        await ApplicationLogger.LogInfo($"Server {tradeServer} : Couldn't make a request to set trade {errorMessage}");
+
+                    }
+                }
+            }
         }
 
         public async Task SendPMToAdmins(string messaga)
