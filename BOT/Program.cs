@@ -31,31 +31,30 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-//var telegramService = builder.Services.BuildServiceProvider().GetRequiredService<TelegramService>();
+var telegramService = builder.Services.BuildServiceProvider().GetRequiredService<TelegramService>();
 
 //#if DEBUG
 //var period = 50000;
 
 //#else   
-//var period = 5000;
-//#endif
-//var timer = new Timer(async (state) =>
-//{
-//    try
-//    {
-//        await telegramService.CheckMessages();
-//    }
-//    catch (Exception ex)
-//    {
+var period = 5000;
+var timer = new Timer(async (state) =>
+{
+    try
+    {
+        await telegramService.CheckMessages();
+    }
+    catch (Exception ex)
+    {
 
-//    }
-//},
-//state: null,
-//        dueTime: 0,
-//        period: period);
+    }
+},
+state: null,
+        dueTime: 0,
+        period: period);
 
 await ApplicationLogger.LogInfo(TimeZone.CurrentTimeZone.StandardName);
-await ApplicationLogger.LogInfo("*****VERSION 3.0.0*******");
+await ApplicationLogger.LogInfo("*****VERSION 4.0.0*******");
 
 await app.UseTelegramClient();
 

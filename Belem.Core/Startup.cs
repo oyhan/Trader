@@ -72,6 +72,33 @@ namespace Belem.Core
             {
                 var dialogs = await tgClient.Messages_GetAllDialogs(); // dialogs = groups/channels/users
                 dialogs.CollectUsersChats(Users, Chats);
+                var album = dialogs.chats[1890627427];
+                var peer = album.ToInputPeer();
+
+                var offset = 0;
+
+                var allMessages = await tgClient.Messages_GetHistory(peer, add_offset: offset);
+                var fileNames = allMessages.Messages.Cast<TL.Message>()
+                    .Select(m => m.media).Cast<MessageMediaDocument>()
+                    .Select(m => m.document).Cast<TL.Document>()
+                    .Select(d => d.Filename).ToList();
+                while (allMessages.Messages.Count() == 100)
+                {
+                    offset += 100;
+                    allMessages = await tgClient.Messages_GetHistory(peer, add_offset: offset);
+                    fileNames.AddRange(allMessages.Messages.Where(m => m.ID != 1).Cast<TL.Message>()
+                    .Select(m => m.media).Cast<MessageMediaDocument>()
+                    .Select(m => m.document).Cast<TL.Document>()
+                    .Select(d => d.Filename).ToList());
+                }
+
+                var uploadedFils = System.IO.File.ReadAllLines("filenames.csv").ToList().Select(c => "C:\\Huawei pics\\" + c);
+                var allFiles = Directory.GetFiles("C:\\Huawei pics");
+                var yetToUpload = allFiles.Except(uploadedFils).ToList();
+                var uploadDirectory = Directory.CreateDirectory("c:\\yetToUpload");
+                yetToUpload.ForEach(f => System.IO.File.Copy(f, f.Replace("C:\\Huawei pics", "c:\\yetToUpload")));
+                
+
             }
             catch (TL.RpcException ex)
             {
@@ -87,11 +114,11 @@ namespace Belem.Core
                 {
                     //1623976558 signal group
                     //869380573 test group
-
+                    //huaweiAlbum -1001890627427
                     switch (update)
                     {
                         case UpdateNewMessage { message: TL.Message message }:
-                            if (message.Peer.ID == 869380573 || message.Peer.ID == 1623976558)
+                            if (message.Peer.ID == -1001890627427 )
                             {
                                 var canProcessMessage = message.Peer.ID == 1623976558 ? WhiteList.Any(c => c.Key == message.from_id.ID) ? true :
                                 false : true;

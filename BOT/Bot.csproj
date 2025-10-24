@@ -9,10 +9,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="filenames.csv" />
     <None Remove="tessdata\eng.traineddata" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="filenames.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="tessdata\eng.traineddata">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

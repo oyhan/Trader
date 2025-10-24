@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33122.133
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TradingApi", "TradingApi\TradingApi.csproj", "{02D147D2-A441-4CA0-B46F-D559CF5F37EE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TradingApi", "TradingApi\TradingApi.csproj", "{02D147D2-A441-4CA0-B46F-D559CF5F37EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Belem.Core", "Belem.Core\Belem.Core.csproj", "{94968249-DD29-44C4-B6E2-5C0CB8F32AF5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Belem.Core", "Belem.Core\Belem.Core.csproj", "{94968249-DD29-44C4-B6E2-5C0CB8F32AF5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bot", "BOT\Bot.csproj", "{E6EF8DC4-49D2-4EB2-8F80-ED7DBCCB2792}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TDrive", "TDrive\TDrive.csproj", "{6353EDAB-B288-471D-B390-B20F16BCCB49}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "General", "General\General.csproj", "{A3193773-03A9-4D30-9B3F-68034A5442A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TDriveMaui", "TDriveMaui\TDriveMaui.csproj", "{42B98673-FFCB-48FF-BF67-83874B30C735}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +33,20 @@ Global
 		{E6EF8DC4-49D2-4EB2-8F80-ED7DBCCB2792}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E6EF8DC4-49D2-4EB2-8F80-ED7DBCCB2792}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E6EF8DC4-49D2-4EB2-8F80-ED7DBCCB2792}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6353EDAB-B288-471D-B390-B20F16BCCB49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6353EDAB-B288-471D-B390-B20F16BCCB49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6353EDAB-B288-471D-B390-B20F16BCCB49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6353EDAB-B288-471D-B390-B20F16BCCB49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3193773-03A9-4D30-9B3F-68034A5442A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3193773-03A9-4D30-9B3F-68034A5442A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3193773-03A9-4D30-9B3F-68034A5442A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3193773-03A9-4D30-9B3F-68034A5442A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B98673-FFCB-48FF-BF67-83874B30C735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42B98673-FFCB-48FF-BF67-83874B30C735}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42B98673-FFCB-48FF-BF67-83874B30C735}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{42B98673-FFCB-48FF-BF67-83874B30C735}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42B98673-FFCB-48FF-BF67-83874B30C735}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42B98673-FFCB-48FF-BF67-83874B30C735}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

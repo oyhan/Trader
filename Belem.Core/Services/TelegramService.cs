@@ -8,11 +8,11 @@ namespace Belem.Core.Services
     {
         private const string SignalPath = "wwwroot/signal.jpg";
         private const string LastUpdate = "lastupdate.txt";
-        private readonly  TelegramBotClient _bot;
+        private readonly TelegramBotClient _bot;
         private readonly ImageProcessor _imageProcessor;
         private readonly AppSettings _appSettings;
 
-        
+
 
         public TelegramService(TelegramBotClient bot, AppSettings appSettings,
             ImageProcessor imageProcessor)
@@ -46,31 +46,13 @@ namespace Belem.Core.Services
                     if (_appSettings.AllowedChats.Contains(update?.Message?.Chat.Id.ToString()))
                     {
                         var command = update?.Message?.Text;
-                        
+
                         if (command is not null)
                         {
-                           await ExecuteCommand(command);
+                            await ExecuteCommand(command);
                         }
-                        var photo = update?.Message?.Photo;
-                        if (photo != null)
-                        {
-                            var biggestPhoto = photo.OrderByDescending(p => p.FileSize).FirstOrDefault();
-
-                            var file = await _bot.GetFileAsync(biggestPhoto.FileId);
-
-                            var fileStream = new FileStream(SignalPath, FileMode.OpenOrCreate);
-
-                            await _bot.DownloadFileAsync(file.FilePath, fileStream);
-
-                            fileStream.Close();
-
-                            (TimeSpan buy, TimeSpan sell, string token) = await _imageProcessor.GetTradeInfo(SignalPath);
 
 
-
-                            await SendPMToAdmins($"{buy} , {sell} ,{token}");
-
-                        }
                     }
                 }
                 if (updates.Any())
@@ -89,14 +71,14 @@ namespace Belem.Core.Services
         private async Task ExecuteCommand(string command)
         {
             var sections = command.Split(" ");
-            if (sections.Length<2)
+            if (sections.Length < 2)
             {
                 await ApplicationLogger.LogInfo("can not execute command less than 2 part");
                 return;
             }
             var toplevel = sections[0];
             var function = sections[1];
-            if (function.ToLower()=="server")
+            if (function.ToLower() == "server")
             {
                 foreach (var tradeServer in _appSettings.TradingServers)
                 {
@@ -116,11 +98,11 @@ namespace Belem.Core.Services
                 }
             }
 
-            if (function.ToLower()== "buy" || function.ToLower()=="sell")
+            if (function.ToLower() == "buy" || function.ToLower() == "sell")
             {
                 if (sections.Length < 3)
                 {
-                    await ApplicationLogger.LogError("token needed"); 
+                    await ApplicationLogger.LogError("token needed");
                     return;
                 }
                 var token = sections[2];
@@ -153,11 +135,11 @@ namespace Belem.Core.Services
             }
         }
 
-        public async Task SendPhotoToAdmins(MemoryStream memoryStream,string caption)
+        public async Task SendPhotoToAdmins(MemoryStream memoryStream, string caption)
         {
             foreach (var admin in _appSettings.AllowedChats)
             {
-                await  _bot.SendPhotoAsync(admin,new Telegram.Bot.Types.InputFiles.InputOnlineFile(memoryStream), caption: caption);
+                await _bot.SendPhotoAsync(admin, new Telegram.Bot.Types.InputFiles.InputOnlineFile(memoryStream), caption: caption);
             }
         }
     }
